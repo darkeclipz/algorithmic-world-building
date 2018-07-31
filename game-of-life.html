@@ -101,6 +101,10 @@
                         <td>Smooth ({{ nSmooth }})<br/><small>Cells alive for smoothing generation.</small></td>
                         <td><input type="range" min="1" max="8" step="1" v-model="nSmooth"/></td>
                     </tr>
+                    <tr>
+                        <td>Autosmooth<br/><small>Automatically smooth at the end.</small></td>
+                        <td><input type="checkbox" v-model="autoSmooth" v-on:change="reset"/></td>
+                    </tr>
                 </tbody>
             </table>
 
@@ -126,7 +130,8 @@
                 nSuffocate: 7,
                 suffocation: false,
                 generations: 6,
-                countCenter: false
+                countCenter: false,
+                autoSmooth: true
 
             },
             methods: {
@@ -137,6 +142,8 @@
 
                     let numberOfGenerations = this.generations;
                     while(numberOfGenerations-- > 0) this.next();
+
+                    if(this.autoSmooth) this.quickSmooth();
                 },
                 next: function() {
                     tilemap = nextGeneration();
