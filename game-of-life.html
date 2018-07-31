@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Tile Explorer -- Conquest JS</title>
+    <title>Game of Life - Algorithmic world building</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>  
     <link href="https://fonts.googleapis.com/css?family=Crimson+Text" rel="stylesheet">
@@ -58,6 +58,7 @@
                             <button v-on:click="increase" style="width: 32px;">+</button>
                             <button v-on:click="decrease" style="width: 32px;">-</button>
                             <button v-on:click="smooth">Smooth</button>
+                            <button v-on:click="quickSmooth">Quick smooth</button>
                         </td>
                     </tr>
                     <tr>
@@ -158,6 +159,14 @@
                 smooth: function() {
                     let previousAliveCells = this.nAlive;
                     this.nAlive = app.nSmooth;
+                    this.next();
+                    this.nAlive = previousAliveCells;
+                },
+                quickSmooth: function() {
+                    let previousAliveCells = this.nAlive;
+                    this.nAlive = 2;
+                    this.next();
+                    this.nAlive = 6;
                     this.next();
                     this.nAlive = previousAliveCells;
                 }
