@@ -40,7 +40,7 @@
 
             <h2>Parameters</h2>
 
-            The algorithm can be adjusted by tweaking with the parameters below.
+            The behaviour of the algorithm can be adjusted by tweaking with the parameters below.
     
             <table>
                 <!-- <thead>
@@ -120,17 +120,17 @@
             data: {
 
                 message: 'Hello Vue!',
-                initialProbability: .5,
+                initialProbability: .16,
                 width: 4,
                 height: 4,
-                seedStart: 200,
+                seedStart: 39681,
                 seed: 0,
-                nAlive: 4,
+                nAlive: 3,
                 nSmooth: 2,
-                nSuffocate: 7,
+                nSuffocate: 5,
                 suffocation: false,
-                generations: 6,
-                countCenter: false,
+                generations: 10,
+                countCenter: true,
                 autoSmooth: true
 
             },
@@ -143,7 +143,11 @@
                     let numberOfGenerations = this.generations;
                     while(numberOfGenerations-- > 0) this.next();
 
-                    if(this.autoSmooth) this.quickSmooth();
+                    if(this.autoSmooth) {
+                        this.quickSmooth(); 
+                        this.quickSmooth(); 
+                    }
+
                 },
                 next: function() {
                     tilemap = nextGeneration();
