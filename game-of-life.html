@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Tile Explorer -- Conquest JS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>  
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <style>
+        body { background-color: #eee; padding: 0; margin: 40px auto; font-family: 'Open Sans', sans-serif; max-width: 800px; }
+        canvas { border: 1px #ddd solid; }
+        table { width: 100%; }
+        table th, table td { border-bottom: 1px #ddd solid; margin: 0; padding: 16px; text-align: left; }
+        input { padding: 8px; border: 1px #ddd solid; background-color: #fff; border-radius: 5px; width: 100%; }
+        button { padding: 8px; border: 1px #ddd solid; cursor: pointer; border-radius: 5px; background-color: #fff; }
+        button:hover { background-color: #ddd; }
+        small { color: #888; font-size: 9pt; }
+    </style>  
+</head>
+<body >
+
+    <div id="app">
+
+        <h1>Game of Life</h1>
+
+        <canvas id="draw" width="800" height="400"></canvas>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 40%">Property</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Controls<br/><small>Control the game of life algorithm.</small></td>
+                    <td>
+                        <button v-on:click="reset">Reset</button>
+                        <button v-on:click="nextGeneration">Next generation</button>
+                        <button v-on:click="printRandom">Random</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Width<br/><small>Indicates the width of the grid that is used.</small></td>
+                    <td><input v-model="width"/></td>
+                </tr>
+                <tr>
+                    <td>Height<br/><small>Indicates the height of the grid that is used.</small></td>
+                    <td><input v-model="height"/></td>
+                </tr>
+                <tr>
+                    <td>Initial probability ({{ initialProbability }})<br/><small>Probability that a cell is alive at the beginning.</small></td>
+                    <td><input type="range" min="0" max="1" step="0.01" v-model="initialProbability"/></td>
+                </tr>
+                <tr>
+                    <td>Seed<br/><small>Seed that is used for the RNG.</small></td>
+                    <td><input v-model="seed"/></td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <script>
+   
+        let canvas, ctx;
+
+        let app = new Vue({
+            el: "#app",
+            data: {
+
+                message: 'Hello Vue!',
+                initialProbability: .25,
+                width: 80,
+                height: 40,
+                seed: 1
+
+            },
+            methods: {
+
+                reset: function() {
+
+                    console.log('Restart');
+
+                },
+                nextGeneration: function() {
+
+                    console.log('Next generation');
+
+                },
+                random: function() {
+
+                    let x = Math.sin(this.seed++ * 4871452.47) * 87175.89;
+                    return x - Math.floor(x);
+
+                },
+                printRandom: function() {
+
+                    console.log(this.random());
+                    
+                }
+
+            }
+        }); 
+
+        canvas = document.getElementById("draw");
+        ctx = canvas.getContext("2d");
+
+    </script>
+</body>
+</html>
