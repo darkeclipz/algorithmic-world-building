@@ -6,65 +6,108 @@
     <title>Tile Explorer -- Conquest JS</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>  
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Crimson+Text" rel="stylesheet">
     <style>
-        body { background-color: #eee; padding: 0; margin: 40px auto; font-family: 'Open Sans', sans-serif; max-width: 800px; }
-        canvas { border: 1px #ddd solid; }
-        table { width: 100%; }
-        table th, table td { border-bottom: 1px #ddd solid; margin: 0; padding: 16px; text-align: left; }
+        body { background-color: #eee; padding: 0; margin: 40px auto; font-family: 'Crimson Text', sans-serif; font-size: 16pt; }
+        canvas { border: 1px #ddd solid; margin: 25px 0; }
+        table { width: 100%; margin: 25px 0; }
+        table th, table td { font-size: 14pt; border-bottom: 1px #ddd solid; margin: 0; padding: 4px 16px; text-align: left; vertical-align: center; }
         input { padding: 8px; border: 1px #ddd solid; background-color: #fff; border-radius: 5px; width: 100%; }
         button { padding: 8px; border: 1px #ddd solid; cursor: pointer; border-radius: 5px; background-color: #fff; }
         button:hover { background-color: #ddd; }
-        small { color: #888; font-size: 9pt; }
+        small { color: #888; font-size: 10pt; }
+        .app-canvas { width: 800px; padding: 0 40px; } 
+        .app-canvas, .app-parameters { float: left; padding: 0 40px; }
     </style>  
 </head>
 <body >
 
     <div id="app">
+        <div class="app-canvas">
+            
+            <h1>Game of Life</h1>
 
-        <h1>Game of Life</h1>
+            Game of life, or shortly, Life, is an algorithm that has been developed by John Conway. With clever adjustments to the algorithm, we can use this to generate 2D tilemaps.
 
-        <canvas id="draw" width="800" height="400"></canvas>
+            <canvas id="draw" width="800" height="400"></canvas>
 
-        <table>
-            <thead>
-                <tr>
-                    <th style="width: 40%">Property</th>
-                    <th>Value</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Controls<br/><small>Control the game of life algorithm.</small></td>
-                    <td>
-                        <button v-on:click="reset">Reset</button>
-                        <button v-on:click="nextGeneration">Next generation</button>
-                        <button v-on:click="printRandom">Random</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Width<br/><small>Indicates the width of the grid that is used.</small></td>
-                    <td><input v-model="width"/></td>
-                </tr>
-                <tr>
-                    <td>Height<br/><small>Indicates the height of the grid that is used.</small></td>
-                    <td><input v-model="height"/></td>
-                </tr>
-                <tr>
-                    <td>Initial probability ({{ initialProbability }})<br/><small>Probability that a cell is alive at the beginning.</small></td>
-                    <td><input type="range" min="0" max="1" step="0.01" v-model="initialProbability"/></td>
-                </tr>
-                <tr>
-                    <td>Seed<br/><small>Seed that is used for the RNG.</small></td>
-                    <td><input v-model="seed"/></td>
-                </tr>
-            </tbody>
-        </table>
+            <h2>Algorithm</h2>
+            The world is first initialized with a tileset, where there is a state: alive or death, that is based on a uniformly distributed probability. On each generation, we iterate over every cell, and count the neighbours that are alive.
+            Next, we mark this cell alive if there are more than $N$ cells, around it, that are alive. In the original algorithm there is another rule. A cell dies if there are too many alive cells around it.  We will ignore this rule, we want the map to grow/expand, not to have it shrink.
 
+        </div>
+        <div class="app-parameters">
+
+            <h2>Parameters</h2>
+
+            The algorithm can be adjusted by tweaking with the parameters below.
+    
+            <table>
+                <!-- <thead>
+                    <tr>
+                        <th style="width: 40%">Property</th>
+                        <th>Value</th>
+                    </tr>
+                </thead> -->
+                <tbody>
+                    <tr>
+                        <td>Controls<br/><small>Control the game of life algorithm.</small></td>
+                        <td>
+                            <button v-on:click="reset">Reset</button>
+                            <button v-on:click="next">Next generation</button>
+                            <button v-on:click="increase" style="width: 32px;">+</button>
+                            <button v-on:click="decrease" style="width: 32px;">-</button>
+                            <button v-on:click="smooth">Smooth</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Width<br/><small>Indicates the width of the grid that is used.</small></td>
+                        <td><input v-model="width" v-on:change="reset"/></td>
+                    </tr>
+                    <tr>
+                        <td>Height<br/><small>Indicates the height of the grid that is used.</small></td>
+                        <td><input v-model="height" v-on:change="reset"/></td>
+                    </tr>
+                    <tr>
+                        <td>Initial probability ({{ initialProbability }})<br/><small>Probability that a cell is alive at the beginning.</small></td>
+                        <td><input type="range" min="0" max="1" step="0.01" v-model="initialProbability" v-on:change="reset"/></td>
+                    </tr>
+                    <tr>
+                        <td>Neighbours alive ({{ nAlive }})<br/><small>Amount of alive neighbors to become alive.</small></td>
+                        <td><input type="range" min="1" max="8" step="1" v-model="nAlive" v-on:change="reset"/></td>
+                    </tr>
+                    <tr>
+                        <td>Suffocation<br/><small>Enable to have cells die from suffocation.</small></td>
+                        <td><input type="checkbox" v-model="suffocation" v-on:change="reset"/></td>
+                    </tr>
+                    <tr>
+                        <td>Neighbours suffocate ({{ nSuffocate }})<br/><small>Amount of alive neighbors to die from suffocation.</small></td>
+                        <td><input type="range" min="1" max="8" step="1" v-model="nSuffocate" v-on:change="reset"/></td>
+                    </tr>
+                    <tr>
+                        <td>Generations ({{ generations }})<br/><small>Iterations to run the algorithm.</small></td>
+                        <td><input type="range" min="0" max="100" step="1" v-model="generations" v-on:change="reset"/></td>
+                    </tr>
+                    <tr>
+                        <td>Center cell<br/><small>Check for the center cell to be alive.</small></td>
+                        <td><input type="checkbox" v-model="countCenter" v-on:change="reset"/></td>
+                    </tr>
+                    <tr>
+                        <td>Seed<br/><small>Seed that is used to start the generator.</small></td>
+                        <td><input v-model="seedStart" v-on:change="reset" style="width: calc(100% - 100px);"/> <button v-on:click="randomSeed">Random</button></td>
+                    </tr>
+                    <tr>
+                        <td>Smooth ({{ nSmooth }})<br/><small>Cells alive for smoothing generation.</small></td>
+                        <td><input type="range" min="1" max="8" step="1" v-model="nSmooth"/></td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
     </div>
 
     <script>
-   
+
         let canvas, ctx;
 
         let app = new Vue({
@@ -72,42 +115,164 @@
             data: {
 
                 message: 'Hello Vue!',
-                initialProbability: .25,
-                width: 80,
-                height: 40,
-                seed: 1
+                initialProbability: .5,
+                width: 4,
+                height: 4,
+                seedStart: 200,
+                seed: 0,
+                nAlive: 4,
+                nSmooth: 2,
+                nSuffocate: 7,
+                suffocation: false,
+                generations: 6,
+                countCenter: false
 
             },
             methods: {
-
                 reset: function() {
+                    this.seed = this.seedStart;
+                    tilemap = createTilemap();
+                    renderCanvas();
 
-                    console.log('Restart');
-
+                    let numberOfGenerations = this.generations;
+                    while(numberOfGenerations-- > 0) this.next();
                 },
-                nextGeneration: function() {
-
-                    console.log('Next generation');
-
+                next: function() {
+                    tilemap = nextGeneration();
+                    renderCanvas();
                 },
-                random: function() {
-
-                    let x = Math.sin(this.seed++ * 4871452.47) * 87175.89;
-                    return x - Math.floor(x);
-
+                increase: function() {
+                    this.width *= 2;
+                    this.height *= 2;
+                    this.reset();
                 },
-                printRandom: function() {
-
-                    console.log(this.random());
-                    
+                decrease: function() {
+                    this.width /= 2;
+                    this.height /= 2;
+                    this.reset();
+                },
+                randomSeed: function() {
+                    this.seedStart = Math.floor(random() * 100000);
+                    this.reset();
+                },
+                smooth: function() {
+                    let previousAliveCells = this.nAlive;
+                    this.nAlive = app.nSmooth;
+                    this.next();
+                    this.nAlive = previousAliveCells;
                 }
-
             }
         }); 
 
+        let tilemap;
+
+        let getTileSize = function() {
+
+            return { x: canvas.width / app.width, y: canvas.height / app.height };
+
+        };
+
+        let nextGeneration = function() {
+
+            let tiles = getTileSize();
+            let nextTilemap = createTilemap(true);
+
+            for(let y=0; y < tiles.y; y++) 
+                for(let x=0; x < tiles.x; x++) {
+
+                    let neighboursAlive = 0;
+                    
+                    // Top left
+                    if(x + y > 0 && tilemap[index(x-1, y-1)]) neighboursAlive++;
+                    
+                    // Top center
+                    if(y > 0 && tilemap[index(x, y-1)]) neighboursAlive++;
+
+                    // Top right
+                    if(y > 0 && x < tiles.x && tilemap[index(x+1, y-1)]) neighboursAlive++;
+
+                    // Right
+                    if(x < tiles.x && tilemap[index(x+1, y)]) neighboursAlive++;
+
+                    // Bottom right
+                    if(x < tiles.x && y < tiles.y && tilemap[index(x+1, y+1)]) neighboursAlive++;
+
+                    // Bottom center
+                    if(y < tiles.y && tilemap[index(x, y+1)]) neighboursAlive++;
+
+                    // Bottom left
+                    if(x > 0 && y > tiles.y && tilemap[index(x-1, y+1)]) neighboursAlive++;
+
+                    // Left
+                    if(x > 0 && tilemap[index(x-1, y)]) neighboursAlive++;
+
+                    // Center
+                    if(tilemap[index(x, y)] && app.countCenter) neighboursAlive++;
+
+                    // Decide if the next cell is dead or alive.
+                    nextTilemap[index(x, y)] = neighboursAlive >= app.nAlive && (neighboursAlive <= app.nSuffocate || !app.suffocation);
+
+                }
+            
+            return nextTilemap;
+
+        };
+
+        let renderCanvas = function() {
+
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            let tiles = getTileSize();
+
+            for(let y=0; y < tiles.y; y++) {
+                for(let x=0; x < tiles.x; x++) {
+
+                    //ctx.fillStyle = (x+y) % 2 == 0 ? 'white' : 'grey'; // Checkerboard pattern
+
+                    ctx.fillStyle = tilemap[index(x, y)] ? 'black' : 'white';
+                    ctx.fillRect(x * app.width, y * app.height, app.width, app.height);
+                }
+            }
+
+        };
+
+        let createTilemap = function(empty = false) {
+
+            let tilemap = [];
+            let tiles = getTileSize();
+
+            for(let i=0; i < tiles.x * tiles.y; i++) 
+                tilemap.push( random() < app.initialProbability && !empty );
+
+            return tilemap;
+
+        };
+
+        let index = function(x, y) {
+
+            return y * getTileSize().x + x;
+
+        }
+
+        let random = function() {
+
+            let x = Math.sin(app.seed++ * 4871452.47) * 87175.89;
+            return x - Math.floor(x);
+
+        };
+
         canvas = document.getElementById("draw");
         ctx = canvas.getContext("2d");
+        app.reset();
 
     </script>
+    <script type="text/x-mathjax-config">
+        // Use $ for inline equations.
+        MathJax.Hub.Config({
+          tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+        });
+    </script>
+    <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 </body>
 </html>
