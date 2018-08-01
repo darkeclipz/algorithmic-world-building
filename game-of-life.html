@@ -120,10 +120,10 @@
             data: {
 
                 message: 'Hello Vue!',
-                initialProbability: .16,
+                initialProbability: .15,
                 width: 4,
                 height: 4,
-                seedStart: 39681,
+                seedStart: 93228,
                 seed: 0,
                 nAlive: 3,
                 nSmooth: 2,
@@ -201,7 +201,7 @@
                 for(let x=0; x < tiles.x; x++) {
 
                     let neighboursAlive = 0;
-                    
+
                     // Top left
                     if(x + y > 0 && tilemap[index(x-1, y-1)]) neighboursAlive++;
                     
