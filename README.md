@@ -17,7 +17,8 @@ let seed = 0;
 let random = function() {
     let x = Math.sin(seed++ * 4871452.47) * 87175.89;
     return x - Math.floor(x);
-};```
+};
+```
 
 ## Game of Life
 
