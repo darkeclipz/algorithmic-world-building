@@ -12,7 +12,7 @@ For example, when a map is generated we only save the seed that is used to gener
 
 Game of life is a cellular automation algorithm developed by John Conway. Normally the algorithm implements a rule where cells can die if there are too many cells around it. If we ignore this rule, the result is an algorithm that will grow/expand. 
 
-!(Game of life)[screenshots/game-of-life-1.png]
+![Game of life](screenshots/game-of-life-1.png)
 
 **Why this works**
 
