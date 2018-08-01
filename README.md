@@ -48,3 +48,7 @@ This is particularly easy to run in parallel on a GPU. Generate a set of random 
 The [implementation of the algorithm](https://www.shadertoy.com/view/Xlccz2) can be viewed live at ShaderToy. There is also a [smooth colored version](https://www.shadertoy.com/view/ltcyRj).
 
 ![Voronoi smooth](screenshots/voronoi-2.png)
+
+Besides pretty images, Nick Berry explains a few very cool use cases:
+
+> If your job was to build a nuclear waste storage depot and a crieterion was that it had to be as far away as possible from any city, you can see how it must be located on a Voronoi edge. Maybe you have to fly your spy plane across a country and want to select a path that is the furthest distance away from every radar station to minimize the chance that you are detected. A maximally clear path will follow the lines edges of a Voronoi tessellation. Do you need to traverse a battlefield keeping a maximal distance for a group of snipers?
