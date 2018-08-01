@@ -45,4 +45,6 @@ This is particularly easy to run in parallel on a GPU. Generate a set of random 
 
 ![Voronoi](screenshots/voronoi-1.png)
 
-The [implementation of the algorithm](https://www.shadertoy.com/view/Xlccz2) can be viewed live at ShaderToy.
+The [implementation of the algorithm](https://www.shadertoy.com/view/Xlccz2) can be viewed live at ShaderToy. There is also a [smooth colored version](https://www.shadertoy.com/view/ltcyRj).
+
+![Voronoi smooth](screenshots/voronoi-2.png)
