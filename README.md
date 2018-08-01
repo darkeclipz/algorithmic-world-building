@@ -38,10 +38,13 @@ It is also possible to smooth a pixel space with this. At any given generation, 
 
 ## Voronoi
 
-In mathematics, a Voronoi diagram is a partitioning of a plane into regions based on distance to points in a specific subset of the plane. That set of points (called seeds, sites, or generators) is specified beforehand, and for each seed there is a corresponding region consisting of all points closer to that seed than to any other. These regions are called Voronoi cells. [[Wikipedia](https://en.wikipedia.org/wiki/Voronoi_diagram)]
+In mathematics, a Voronoi diagram is a partitioning of a plane into regions based on distance to points in a specific subset of the plane. That set of points (called seeds, sites, or generators) is specified beforehand, and for each seed there is a corresponding region consisting of all points closer to that seed than to any other. These regions are called Voronoi cells. [[Wikipedia](https://en.wikipedia.org/wiki/Voronoi_diagram)] An [article from 
+Nick Berry](https://datagenetics.com/blog/may12017/index.html) explains it really well.
 
 This is particularly easy to run in parallel on a GPU. Generate a set of random points, and find the point that has the smallest distance from the pixel to the point. To display it, give each point a specific color to display at that pixel.
 
 ![Voronoi](screenshots/voronoi-1.png)
 
-The [implementation of the algorithm](https://www.shadertoy.com/view/Xlccz2) can be viewed live at ShaderToy.
+The [implementation of the algorithm](https://www.shadertoy.com/view/Xlccz2) can be viewed live at ShaderToy. There is also a [smooth colored version](https://www.shadertoy.com/view/ltcyRj).
+
+![Voronoi smooth](screenshots/voronoi-2.png)
