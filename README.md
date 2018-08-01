@@ -34,7 +34,7 @@ The cool thing about this algorithm is that it will cluster cells on each genera
 
 **Smoothing**
 
-It is also possible to smooth a pixel space with this. At any given generation, we generate a new generation where the number of alive cells required is 2. This will grow the structure that is in the pixel space. After that we want to cut it, by setting the number of alive cells to 7. We then run another generation, which will cut off a portion of the structure. The result yields in a smoothing effect, and the smoothing can be run in multiple successions to create smoother structures.
+It is also possible to smooth a pixel space with this. At any given generation, we generate a new generation where the number of alive cells required is 2. This will grow the structure that is in the pixel space. After that we want to cut it, by setting the number of alive cells to 7. We then run another generation, which will cut off a portion of the structure. The result acts like a smoothing effect, and the smoothing can be done in multiple successions to create a smoother structure.
 
 ## Voronoi
 
