@@ -20,7 +20,7 @@ let random = function() {
 };
 ```
 
-Because this is a simple generator, **do not use this for cryptographic purposes**.
+Because this is a simple generator, **do not use this for _cryptographic_ purposes**!!
 
 ## Game of Life
 
