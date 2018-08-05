@@ -64,7 +64,7 @@ The following example gives the idea of a skeleton. It has 30 adjustable paramet
 
 ![Skeleton](screenshots/skeleton.png)
 
-An approach for the face would be to map point from a 2D plane onto a 3D face. Then apply any rotation to the face, and get the points back to 2D space to draw the properly.
+An approach for the face would be to map point from a 2D plane onto a 3D face. Then apply any rotation to the face, and get the points back to 2D space to draw them properly.
 
 ## Joint interpolation
 
