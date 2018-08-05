@@ -90,3 +90,5 @@ for(int i=0; i <= N; i++) {
     drawPoint(R);   
 }
 ```
+
+We can get the normal vector (red line in the illustration), and normalize it so it has unit length. Then at each interpolated point we get the top point with `R + normal` and the bottom point with `R - normal`. We can then create a function `f` that has alpha as input, and gives a value between [0, 1]. If we calculate `(R + normal) * f(alpha)` this results in the top points distance following a curve, given by `f`.
