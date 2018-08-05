@@ -295,34 +295,34 @@
         let angles = {
             upperBack: 0,
             lowerBack:  0,
-            leftShoulder: 0,
-            rightShoulder:  0,
-            leftUpperArm:  0,
-            leftLowerArm:  0,
-            rightUpperArm:  0,
-            rightLowerArm:  0,
-            leftHip: 0,
-            rightHip: 0,
-            leftUpperLeg:  0,
-            leftLowerLeg:  0,
-            rightUpperLeg:  0,
-            rightLowerLeg:  0,
+            leftShoulder: .158,
+            rightShoulder:  -0.141,
+            leftUpperArm:  0.158,
+            leftLowerArm:  1.858,
+            rightUpperArm:  -0.241,
+            rightLowerArm:  -1.841,
+            leftHip: .358,
+            rightHip: -.341,
+            leftUpperLeg:  -.341,
+            leftLowerLeg:  .158,
+            rightUpperLeg:  .258,
+            rightLowerLeg:  -.141,
             head: 0
         };
 
         let parameters = {
-            upperBackHeight: 64,
+            upperBackHeight: 34,
             lowerBackHeight: 32,
-            shoulderWidth: 32,
-            upperArmLength: 32,
-            lowerArmLength: 32,
-            upperLegLength: 32,
-            lowerLegLength: 32,
-            hipWidth: 12,
-            headRadius: 32,
-            headHeight: 32,
+            shoulderWidth: 20,
+            upperArmLength: 24,
+            lowerArmLength: 26,
+            upperLegLength: 28,
+            lowerLegLength: 30,
+            hipWidth: 9,
+            headRadius: 15,
+            headHeight: 19,
             headScaleY: .9,
-            headScaleX: .8
+            headScaleX: 1.15
         };
 
         let drawingSettings = {
@@ -454,7 +454,7 @@
                 angles: angles,
                 parameters: parameters,
                 drawingSettings: drawingSettings,
-                bodyRotation: Math.PI/6
+                bodyRotation: 0
             },
             methods: {
                 updateBodyRotation() {
