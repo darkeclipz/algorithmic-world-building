@@ -57,3 +57,17 @@ The [implementation of the algorithm](https://www.shadertoy.com/view/Xlccz2) can
 Besides pretty images, Nick Berry explains a few very cool use cases:
 
 > If your job was to build a nuclear waste storage depot and a crieterion was that it had to be as far away as possible from any city, you can see how it must be located on a Voronoi edge. Maybe you have to fly your spy plane across a country and want to select a path that is the furthest distance away from every radar station to minimize the chance that you are detected. A maximally clear path will follow the lines edges of a Voronoi tessellation. Do you need to traverse a battlefield keeping a maximal distance for a group of snipers?
+
+## Skeleton
+
+The following example gives the idea of a skeleton. It has 30 adjustable parameters!
+
+![Skeleton](screenshots/skeleton.png)
+
+An approach for the face would be to map point from a 2D plane onto a 3D face. Then apply any rotation to the face, and get the points back to 2D space to draw the properly.
+
+## Joint interpolation
+
+To draw the characters, we need points. With a provided skeleton, we can generate the point by interpolating between the joints. Based on different curves, we can shape the body to our likings. Finally, all the points should be connected, and draw a quadratic bezier between each point.
+
+![Joint interpolation](screenshots/joint-interpolation.png)
