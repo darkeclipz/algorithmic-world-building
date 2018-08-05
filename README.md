@@ -72,7 +72,7 @@ To draw the characters, we need points. With a provided skeleton, we can generat
 
 ![Joint interpolation](screenshots/joint-interpolation.png)
 
-This is easier than you might think, look at the following example:
+This is easier than you might think, look at the following pseudo-code:
 
 ```javascript
 P = new Vec2(0,0);
