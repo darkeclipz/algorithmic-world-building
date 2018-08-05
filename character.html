@@ -1,0 +1,473 @@
+<!DOCTYPE <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Character</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>  
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <script>
+        let canvasWidth = .7;
+    </script>
+    <style>
+        body { font-family: "Roboto"; font-size: 16pt; padding: 0; margin: 0; }
+        .container { width: 100%; height: 100%; position: absolute; overflow: hidden;}
+        .parameters { width: 30%; float: left; height: 100%; overflow-y: scroll; border-right: 2px #ddd solid; }
+        .render { width: calc(70%-2px); float: left; height: 100%; overflow: hidden; }
+        .parameters { font-size: 9pt; }
+        canvas { position: absolute; }
+        table { width: 100%; border-collapse: collapse; }
+        
+        td { padding: 8px;  font-size: 9pt; border: 1px #ddd solid; }
+        tr { border-bottom: 1px #000 solid; }
+        tr:hover { background-color: #eee; }
+        input { width: 100%; font-size: 9pt; }
+
+    </style>
+</head>
+<body>
+    
+
+    <div class="container">
+        <div class="parameters">
+            <div id="app">
+
+                <table>
+                    <tbody>
+                        <tr>
+                            <!-- DRAWING SETTINGS -->
+                            <td colspan="2"><b>Drawing settings</b></td>
+                        </tr>
+                        <tr>
+                            <td width="60%">Scale ({{ drawingSettings.scale }})<br/><small>Scaling of the canvas.</small></td>
+                            <td><input type="range" min="1" max="25" step=".5" v-model="drawingSettings.scale"/></td>
+                        </tr>
+                        <tr>
+                            <td width="60%">Joint size ({{ drawingSettings.jointSize }})<br/><small>Radius of the joints.</small></td>
+                            <td><input type="range" min="1" max="25" step=".5" v-model="drawingSettings.jointSize"/></td>
+                        </tr>
+                        <tr>
+                            <td width="60%">Bone size ({{ drawingSettings.boneSize }})<br/><small>Stroke width of the bones.</small></td>
+                            <td><input type="range" min="1" max="25" step=".5" v-model="drawingSettings.boneSize"/></td>
+                        </tr>
+                        <tr>
+                            <!-- BODY -->
+                            <td colspan="2"><b>Body</b></td>
+                        </tr>
+                        <tr>
+                            <td>Position X ({{model.position.x}}) <br/> <small>Translate the body along the X axis.</small></td>
+                            <td><input type="range" min="-200" max="200" step="1" v-model.number="model.position.x"/></td>
+                        </tr>
+                        <tr>
+                            <td>Position Y ({{model.position.y}}) <br/> <small>Translate the body along the Y axis.</small></td>
+                            <td><input type="range" min="-200" max="200" step="1" v-model.number="model.position.y"/></td>
+                        </tr>
+                        <tr>
+                            <td>Rotation ({{bodyRotation}} rad)<br/> <small>Rotate the shoulders and hips by a given angle.</small></td>
+                            <td><input type="range" min="0" max="1.570796327" step="0.01" v-model.number="bodyRotation" v-on:change="updateBodyRotation()"/></td>
+                        </tr>
+                        <tr>
+                            <!-- HEAD -->
+                            <td colspan="2"><b>Head</b></td>
+                        </tr>
+                        <tr>
+                            <td>Height ({{parameters.headHeight}})<br/> <small>Positions the head above the shoulders.</small></td>
+                            <td><input type="range" min="1" max="100" step="1" v-model.number="parameters.headHeight"/></td>
+                        </tr>
+                        <tr>
+                            <td>Radius ({{parameters.headRadius}})<br/> <small>Size of the head.</small></td>
+                            <td><input type="range" min="1" max="100" step="1" v-model.number="parameters.headRadius"/></td>
+                        </tr>
+                        <tr>
+                            <td>Scale X ({{parameters.headScaleX}})<br/> <small>Used to stretch the head.</small></td>
+                            <td><input type="range" min="0.05" max="2" step="0.05" v-model.number="parameters.headScaleX"/></td>
+                        </tr>
+                        <tr>
+                            <td>Scale Y ({{parameters.headScaleY}})<br/> <small>Used to squish the head.</small></td>
+                            <td><input type="range" min="0.05" max="2" step="0.05" v-model.number="parameters.headScaleY"/></td>
+                        </tr>
+                        <tr>
+                            <td>Angle ({{angles.head}})<br/> <small>Change the angle of the head.</small></td>
+                            <td><input type="range" min="-3.141592" max="3.141592" step="0.1" v-model.number="angles.head"/></td>
+                        </tr>
+                        <tr>
+                            <!-- BACK -->
+                            <td colspan="2"><b>Back</b></td>
+                        </tr>
+                        <tr>
+                            <td>Upper back height ({{parameters.upperBackHeight}})<br/> <small>The height of the upper back.</small></td>
+                            <td><input type="range" min="1" max="100" step="1" v-model.number="parameters.upperBackHeight"/></td>
+                        </tr>
+                        <tr>
+                            <td>Upper back angle ({{angles.upperBack}} rad)<br/> <small>Change the angle of the upper back.</small></td>
+                            <td><input type="range" min="-3.141592" max="3.141592" step="0.1" v-model.number="angles.upperBack"/></td>
+                        </tr>
+                        <tr>
+                            <td>Lower back height ({{parameters.lowerBackHeight}})<br/> <small>The height of the lower back.</small></td>
+                            <td><input type="range" min="1" max="100" step="1" v-model.number="parameters.lowerBackHeight"/></td>
+                        </tr>
+                        <tr>
+                            <td>Lower back angle ({{angles.lowerBack}} rad)<br/> <small>Change the angle of the lower back.</small></td>
+                            <td><input type="range" min="-3.141592" max="3.141592" step="0.1" v-model.number="angles.lowerBack"/></td>
+                        </tr>
+                        <tr>
+                            <!-- SHOULDERS -->
+                            <td colspan="2"><b>Shoulders</b></td>
+                        </tr>
+                        <tr>
+                            <td>Shoulder width ({{parameters.shoulderWidth}})<br/> <small>The distance between the shoulders.</small></td>
+                            <td><input type="range" min="1" max="100" step="1" v-model.number="parameters.shoulderWidth"/></td>
+                        </tr>
+                        <tr>
+                            <td>Left shoulder angle ({{angles.leftShoulder}} rad)<br/> <small>Change the angle of the left shoulder.</small></td>
+                            <td><input type="range" min="-3.141592" max="3.141592" step="0.1" v-model.number="angles.leftShoulder"/></td>
+                        </tr>
+                        <tr>
+                            <td>Right shoulder angle ({{angles.rightShoulder}} rad)<br/> <small>Change the angle of the right shoulder.</small></td>
+                            <td><input type="range" min="-3.141592" max="3.141592" step="0.1" v-model.number="angles.rightShoulder"/></td>
+                        </tr>
+                        <tr>
+                            <!-- ARMS -->
+                            <td colspan="2"><b>Arms</b></td>
+                        </tr>
+                        <tr>
+                            <td>Upper arm length ({{parameters.upperArmLength}})<br/> <small>The length of the upper arms.</small></td>
+                            <td><input type="range" min="1" max="100" step="1" v-model.number="parameters.upperArmLength"/></td>
+                        </tr>
+                        <tr>
+                            <td>Lower arm length ({{parameters.lowerArmLength}})<br/> <small>The length of the lower arms.</small></td>
+                            <td><input type="range" min="1" max="100" step="1" v-model.number="parameters.lowerArmLength"/></td>
+                        </tr>
+                        <tr>
+                            <td>Left upper arm angle ({{angles.leftUpperArm}} rad)<br/> <small>Change the angle of the left upper arm.</small></td>
+                            <td><input type="range" min="-3.141592" max="3.141592" step="0.1" v-model.number="angles.leftUpperArm"/></td>
+                        </tr>
+                        <tr>
+                            <td>Left lower arm angle ({{angles.leftLowerArm}} rad)<br/> <small>Change the angle of the left lower arm.</small></td>
+                            <td><input type="range" min="-3.141592" max="3.141592" step="0.1" v-model.number="angles.leftLowerArm"/></td>
+                        </tr>
+                        <tr>
+                            <td>Right upper arm angle ({{angles.rightUpperArm}} rad)<br/> <small>Change the angle of the right upper arm.</small></td>
+                            <td><input type="range" min="-3.141592" max="3.141592" step="0.1" v-model.number="angles.rightUpperArm"/></td>
+                        </tr>
+                        <tr>
+                            <td>Right lower arm angle ({{angles.rightLowerArm}} rad)<br/> <small>Change the angle of the right lower arm.</small></td>
+                            <td><input type="range" min="-3.141592" max="3.141592" step="0.1" v-model.number="angles.rightLowerArm"/></td>
+                        </tr>
+                        <tr>
+                            <!-- HIPS -->
+                            <td colspan="2"><b>Hips</b></td>
+                        </tr>
+                        <tr>
+                            <td>Hip width ({{parameters.hipWidth}})<br/> <small>The distance between the hips.</small></td>
+                            <td><input type="range" min="1" max="100" step="1" v-model.number="parameters.hipWidth"/></td>
+                        </tr>
+                        <tr>
+                            <td>Left hip angle ({{angles.leftHip}} rad)<br/> <small>Change the angle of the left hip.</small></td>
+                            <td><input type="range" min="-3.141592" max="3.141592" step="0.1" v-model.number="angles.leftHip"/></td>
+                        </tr>
+                        <tr>
+                            <td>Right hip angle ({{angles.rightHip}} rad)<br/> <small>Change the angle of the right hip.</small></td>
+                            <td><input type="range" min="-3.141592" max="3.141592" step="0.1" v-model.number="angles.rightHip"/></td>
+                        </tr>
+                        <tr>
+                            <!-- LEGS -->
+                            <td colspan="2"><b>Legs</b></td>
+                        </tr>        
+                        <tr>
+                            <td>Upper leg length ({{parameters.upperLegLength}})<br/> <small>The length of the upper legs.</small></td>
+                            <td><input type="range" min="1" max="100" step="1" v-model.number="parameters.upperLegLength"/></td>
+                        </tr>
+                        <tr>
+                            <td>Lower leg length ({{parameters.lowerLegLength}})<br/> <small>The length of the lower legs.</small></td>
+                            <td><input type="range" min="1" max="100" step="1" v-model.number="parameters.lowerLegLength"/></td>
+                        </tr>
+                        <tr>
+                            <td>Left upper leg angle ({{angles.leftUpperLeg}} rad)<br/> <small>Change the angle of the left upper leg.</small></td>
+                            <td><input type="range" min="-3.141592" max="3.141592" step="0.1" v-model.number="angles.leftUpperLeg"/></td>
+                        </tr>
+                        <tr>
+                            <td>Left lower leg angle ({{angles.leftLowerLeg}} rad)<br/> <small>Change the angle of the left lower leg.</small></td>
+                            <td><input type="range" min="-3.141592" max="3.141592" step="0.1" v-model.number="angles.leftLowerLeg"/></td>
+                        </tr>
+                        <tr>
+                            <td>Right upper leg angle ({{angles.rightUpperLeg}} rad)<br/> <small>Change the angle of the right upper leg.</small></td>
+                            <td><input type="range" min="-3.141592" max="3.141592" step="0.1" v-model.number="angles.rightUpperLeg"/></td>
+                        </tr>
+                        <tr>
+                            <td>Right lower leg angle ({{angles.rightLowerLeg}} rad)<br/> <small>Change the angle of the right lower leg.</small></td>
+                            <td><input type="range" min="-3.141592" max="3.141592" step="0.1" v-model.number="angles.rightLowerLeg"/></td>
+                        </tr>              
+                    </tbody>
+                </table>
+        
+            </div>
+        </div>
+        <div class="render">
+            <canvas id="canvas"></canvas>
+        </div>
+    </div>
+
+    <script>
+    
+        function Vec2(x,y) {
+            this.x=x;
+            this.y=y;
+            if(this.y == null) this.y=this.x;
+
+            this.toString = function() {
+                return "(" + rnd(this.x,2) + ", " + rnd(this.y,2) + ")";
+            }
+            this.add = function(v) {
+                return new Vec2(this.x+v.x, this.y+v.y);
+            }
+            this.subtract = function(v) {
+                var value = parseFloat(v);
+                if(!isNaN(value)) {
+                    v = new Vec2(value, value);
+                }
+                return new Vec2(this.x-v.x, this.y-v.y);
+            }
+            this.scale = function(scalar) {
+                return new Vec2(scalar*this.x, scalar*this.y);
+            }
+            this.vmult = function(v) {
+                return new Vec2(this.x*v.x, this.y*v.y);
+            }
+            this.dot = function(v) {
+                return this.x*v.x + this.y*v.y;
+            }
+            this.length = function() {
+                return Math.sqrt(this.x*this.x + this.y*this.y);
+            }
+            this.rotate = function(angle) {
+                let c = Math.cos(angle);
+                let s = Math.sin(angle);
+                return new Vec2( c * this.x + -s * this.y, s * this.x + c * this.y );
+            }
+            this.distance = function(v) {
+                x = this.x-v.x; y = this.y-v.y;
+                return Math.sqrt(x*x + y*y);
+            }
+            this.apply = function(f) {
+                return new Vec2(f(this.x), f(this.y));
+            }
+            this.floor = function() {
+                return this.apply(Math.floor);
+            }
+            this.fract = function() {
+                return this.subtract(this.apply(Math.floor));
+            }
+            this.normalize = function() {
+                var l = this.length();
+                return new Vec2(this.x / l, this.y / l);
+            }
+            this.cross = function(v) {
+                return this.length() * v.length () * this.angle(v);
+            }
+        }
+
+        let canvas = document.getElementById('canvas');
+        canvas.width = window.innerWidth * canvasWidth;
+        canvas.height = window.innerHeight;
+        let ctx = canvas.getContext('2d');
+
+        let model = {
+            position: new Vec2(0),
+            upperBack: new Vec2(0,1),
+            lowerBack: new Vec2(0,-1),
+            leftShoulder: new Vec2(-1,0),
+            rightShoulder: new Vec2(1, 0),
+            leftUpperArm: new Vec2(0,-1),
+            leftLowerArm: new Vec2(0,-1),
+            rightUpperArm: new Vec2(0,-1),
+            rightLowerArm: new Vec2(0,-1),
+            leftHip: new Vec2(-1,0),
+            rightHip: new Vec2(1,0),
+            leftUpperLeg: new Vec2(0,-1),
+            leftLowerLeg: new Vec2(0,-1),
+            rightUpperLeg: new Vec2(0,-1),
+            rightLowerLeg: new Vec2(0,-1),
+            head: new Vec2(0, 1)
+        };
+
+        let angles = {
+            upperBack: 0,
+            lowerBack:  0,
+            leftShoulder: 0,
+            rightShoulder:  0,
+            leftUpperArm:  0,
+            leftLowerArm:  0,
+            rightUpperArm:  0,
+            rightLowerArm:  0,
+            leftHip: 0,
+            rightHip: 0,
+            leftUpperLeg:  0,
+            leftLowerLeg:  0,
+            rightUpperLeg:  0,
+            rightLowerLeg:  0,
+            head: 0
+        };
+
+        let parameters = {
+            upperBackHeight: 64,
+            lowerBackHeight: 32,
+            shoulderWidth: 32,
+            upperArmLength: 32,
+            lowerArmLength: 32,
+            upperLegLength: 32,
+            lowerLegLength: 32,
+            hipWidth: 12,
+            headRadius: 32,
+            headHeight: 32,
+            headScaleY: .9,
+            headScaleX: .8
+        };
+
+        let drawingSettings = {
+            jointSize: 3,
+            boneSize: 2,
+            scale: 3.5
+        }
+
+        let vMoveTo = function(v) {
+            ctx.moveTo(v.x, v.y);
+        }
+
+        let vLineTo = function(v) {
+            ctx.lineTo(v.x, v.y);
+        }
+
+        let vJoint = function(v) {
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(v.x, v.y, drawingSettings.jointSize, 0, 2*Math.PI);
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        let vBone = function(v, u) {
+            ctx.lineWidth = drawingSettings.boneSize;
+            ctx.beginPath();
+            vMoveTo(v);
+            vLineTo(u);
+            ctx.stroke();
+        }
+
+        model.position = new Vec2(0);
+
+        // Flip the canvas (origin in the lower left corner)
+        ctx.translate(0, canvas.height);
+        ctx.scale(1,-1);
+
+        let drawModel = function () {
+
+            ctx.save();
+            ctx.translate(canvas.width/2, canvas.height/2);
+            ctx.scale(drawingSettings.scale, drawingSettings.scale);
+
+            ctx.strokeStyle = "#000";
+            ctx.fillStyle = "#ddd";
+        
+            let vUpperBack = model.upperBack.rotate(angles.upperBack).scale(parameters.upperBackHeight).add(model.position);
+            let vLowerBack = model.lowerBack.rotate(angles.lowerBack).scale(parameters.lowerBackHeight).add(model.position);
+            let vLeftShoulder = model.leftShoulder.rotate(angles.leftShoulder).scale(parameters.shoulderWidth).add(vUpperBack);
+            let vRightShoulder = model.rightShoulder.rotate(angles.rightShoulder).scale(parameters.shoulderWidth).add(vUpperBack);
+            let vRightUpperArm = model.rightUpperArm.rotate(angles.rightUpperArm).scale(parameters.upperArmLength).add(vRightShoulder);
+            let vLeftUpperArm = model.leftUpperArm.rotate(angles.leftUpperArm).scale(parameters.upperArmLength).add(vLeftShoulder);
+            let vRightLowerArm = model.rightLowerArm.rotate(angles.rightLowerArm).scale(parameters.lowerArmLength).add(vRightUpperArm);
+            let vLeftLowerArm = model.leftLowerArm.rotate(angles.leftLowerArm).scale(parameters.lowerArmLength).add(vLeftUpperArm);
+            let vLeftHip = model.leftHip.rotate(angles.leftHip).scale(parameters.hipWidth).add(vLowerBack);
+            let vRightHip = model.rightHip.rotate(angles.rightHip).scale(parameters.hipWidth).add(vLowerBack);
+            let vLeftUpperLeg = model.leftUpperLeg.rotate(angles.leftUpperLeg).scale(parameters.upperLegLength).add(vLeftHip);
+            let vRightUpperLeg = model.rightUpperLeg.rotate(angles.rightUpperLeg).scale(parameters.upperLegLength).add(vRightHip);
+            let vLeftLowerLeg = model.leftLowerLeg.rotate(angles.leftLowerLeg).scale(parameters.lowerLegLength).add(vLeftUpperLeg);
+            let vRightLowerLeg = model.rightLowerLeg.rotate(angles.rightLowerLeg).scale(parameters.lowerLegLength).add(vRightUpperLeg);
+            let vHead = model.head.rotate(angles.head).scale(parameters.headHeight).add(vUpperBack);
+
+            vBone(vUpperBack, vHead);
+            vJoint(vHead);
+
+            // Right side
+            vBone(vRightUpperArm, vRightLowerArm);
+            vJoint(vRightLowerArm);
+            vBone(vRightShoulder, vRightUpperArm);
+            vJoint(vRightUpperArm);
+            vBone(vUpperBack, vRightShoulder);
+            vJoint(vRightShoulder);
+            vBone(vRightUpperLeg, vRightLowerLeg);
+            vJoint(vRightLowerLeg);
+            vBone(vRightHip, vRightUpperLeg);
+            vJoint(vRightUpperLeg);
+            vBone(vLowerBack, vRightHip);
+            vJoint(vRightHip);
+
+            // Head
+            ctx.save();
+            ctx.scale(parameters.headScaleX, parameters.headScaleY);
+            ctx.beginPath();
+            ctx.arc(vHead.x / parameters.headScaleX, vHead.y / parameters.headScaleY, parameters.headRadius, 0, 2*Math.PI);
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore();
+
+            // Left side
+            vBone(vLeftUpperLeg, vLeftLowerLeg);
+            vJoint(vLeftLowerLeg);
+            vBone(vLeftHip, vLeftUpperLeg);
+            vJoint(vLeftUpperLeg);
+            vBone(vLowerBack, vLeftHip);
+            vJoint(vLeftHip);
+            vBone(vLeftUpperArm, vLeftLowerArm);
+            vJoint(vLeftLowerArm);
+            vBone(vLeftShoulder, vLeftUpperArm);
+            vJoint(vLeftUpperArm);
+            vBone(vUpperBack, vLeftShoulder);
+            vJoint(vLeftShoulder);
+
+            // Center
+            vBone(model.position, vUpperBack);
+            vJoint(vUpperBack);
+            vBone(model.position, vLowerBack);
+            vJoint(vLowerBack);
+            
+            // Center (Joint)
+            vJoint(model.position);
+
+            ctx.restore();
+        }
+
+        let animate = function() {
+            requestAnimationFrame(animate);
+            ctx.fillStyle = "#fff";
+            ctx.fillRect(-canvas.width, canvas.height, Math.max(drawingSettings.scale, 2) * canvas.width, -Math.max(drawingSettings.scale, 2) * canvas.height);
+            drawModel();
+        }
+
+        animate(); 
+
+        let vue = new Vue({
+            el: "#app",
+            data: {
+                model: model,
+                angles: angles,
+                parameters: parameters,
+                drawingSettings: drawingSettings,
+                bodyRotation: Math.PI/6
+            },
+            methods: {
+                updateBodyRotation() {
+                    this.angles.leftShoulder = this.bodyRotation;
+                    this.angles.rightShoulder = this.bodyRotation;
+                    this.angles.leftHip = this.bodyRotation;
+                    this.angles.rightHip = this.bodyRotation;
+                }
+            }
+        });
+
+        vue.updateBodyRotation();
+
+    </script>
+</body>
+</html>

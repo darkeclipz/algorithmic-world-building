@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Game of Life - Algorithmic world building</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>  
+    <link href="https://fonts.googleapis.com/css?family=Crimson+Text" rel="stylesheet">
+    <style>
+        body { background-color: #eee; padding: 0; margin: 40px auto; font-family: 'Crimson Text', sans-serif; font-size: 16pt; max-width: 700px; }
+        canvas { width: 700px; height: 400px; border: 1px #aaa solid; margin: 24px 0; }
+    </style>
+</head>
+<body>
+    <h1>2D Tilemap Generator</h1>
+    This tool can be used to create a randomly generated tilemap for 2D.
+
+    <h2>Dimensions</h2>
+    First we specify how many tiles we want, for the width, and height.
+
+    <h2>Initial seed</h2>
+    The tilemap is usually first filled with tiles that are on/off based on a certain probability. This forms as a basis for later algorithms to work with. 
+    There are different types of methods that can be used to create the initial conditions. The simplest case is based on a uniformly distributed probability for the entire tilemap.
+
+    <b>Initial probability:</b> 0 - 100
+
+    <canvas></canvas>
+
+    <h2>Generations</h2>
+    Based on the initial conditions, we apply a few iterations of the game of life algorithm.
+
+    <canvas></canvas>
+
+    <h2>Smoothening</h2>
+    Do some smoothening.
+
+    <canvas></canvas>
+
+    <h2>Rule tiles</h2>
+    Generate rule tiles.
+
+    <canvas></canvas>
+
+    <h2>Distance map</h2>
+    Generate a distance map.
+
+    <canvas></canvas>
+    
+</body>
+</html>
