@@ -2,9 +2,9 @@
 
 This repository contains various proof-of-concepts for different types of algorithms that are useful for world building.
 
- * [Game of life](ww.google.nl)
- * [Voronoi](www.google.nl)
- * [Skeleton](www.google.nl)
+ * [Game of life](https://darkeclipz.github.io/algorithmic-world-building/game-of-life.html)
+ * [Voronoi](https://www.shadertoy.com/view/Xlccz2)
+ * [Skeleton](https://darkeclipz.github.io/algorithmic-world-building/skeleton.html)
 
 ## Pseudo random number generator
 
