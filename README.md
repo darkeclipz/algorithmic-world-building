@@ -2,6 +2,10 @@
 
 This repository contains various proof-of-concepts for different types of algorithms that are useful for world building.
 
+ * [Game of life](ww.google.nl)
+ * [Voronoi](www.google.nl)
+ * [Skeleton](www.google.nl)
+
 ## Pseudo random number generator
 
 We want a seed based pseudo random number generator. The main reason for this is, we want predictive random numbers e.g.: if we start at a given seed, it should always generate the same sequence of random numbers. This property can be used to regenerate the same entity. 
