@@ -1,0 +1,343 @@
+<!DOCTYPE <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Joint interpolation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>  
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <script>
+        let canvasWidth = .7;
+    </script>
+    <style>
+        body { font-family: "Roboto"; font-size: 16pt; padding: 0; margin: 0; }
+        .container { width: 100%; height: 100%; position: absolute; overflow: hidden;}
+        .parameters { width: 30%; float: left; height: 100%; overflow-y: scroll; border-right: 2px #ddd solid; }
+        .render { width: calc(70%-2px); float: left; height: 100%; overflow: hidden; }
+        .parameters { font-size: 9pt; }
+        canvas { position: absolute; }
+        table { width: 100%; border-collapse: collapse; }
+        
+        td { padding: 8px;  font-size: 9pt; border: 1px #ddd solid; }
+        tr { border-bottom: 1px #000 solid; }
+        tr:hover { background-color: #eee; }
+        input { width: 100%; font-size: 9pt; }
+        hr { border-top: 0; border-bottom: 1px #ddd dashed;}
+
+    </style>
+</head>
+<body>
+    
+
+    <div class="container">
+        <div class="parameters">
+            <div id="app">
+
+                <table>
+                    <tbody>
+                        <tr>
+                            <!-- DRAWING SETTINGS -->
+                            <td colspan="2"><b>Drawing settings</b></td>
+                        </tr>
+                        <tr>
+                            <td width="60%">Scale ({{ drawingSettings.scale }})<br/><small>Scaling of the canvas.</small></td>
+                            <td><input type="range" min="1" max="25" step=".5" v-model="drawingSettings.scale"/></td>
+                        </tr>
+                        <tr>
+                            <td width="60%">Joint size ({{ drawingSettings.jointSize }})<br/><small>Radius of the joints.</small></td>
+                            <td><input type="range" min="1" max="25" step=".5" v-model="drawingSettings.jointSize"/></td>
+                        </tr>
+                        <tr>
+                            <td width="60%">Bone size ({{ drawingSettings.boneSize }})<br/><small>Stroke width of the bones.</small></td>
+                            <td><input type="range" min="1" max="25" step=".5" v-model="drawingSettings.boneSize"/></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2"><b>Joint A</b></td>
+                        </tr>
+                        <tr>
+                            <td>X ({{jointA.x}})</td>
+                            <td><input type="range" min="-250" max="250" step="1" v-model.number="jointA.x"/></td>
+                        </tr>
+                        <tr>
+                            <td>Y ({{jointA.y}})</td>
+                            <td><input type="range" min="-250" max="250" step="1" v-model.number="jointA.y"/></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2"><b>Joint B</b></td>
+                        </tr>
+                        <tr>
+                            <td>X ({{jointB.x}})</td>
+                            <td><input type="range" min="-250" max="250" step="1" v-model.number="jointB.x"/></td>
+                        </tr>
+                        <tr>
+                            <td>Y ({{jointB.y}})</td>
+                            <td><input type="range" min="-250" max="250" step="1" v-model.number="jointB.y"/></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2"><b>Interpolation</b></td>
+                        <tr> 
+                        </tr>
+                            <td>Interpolation size ({{interpolationCount}})<br/><small>Amount of subdivisions for interpolating.</small></td>
+                            <td><input type="range" min="0" max="24" step="1" v-model.number="interpolationCount"/></td>
+                        </tr>
+                        <tr>
+                            <td>Show mid joint <br/><small>Display a joint at the middle of the bone.</small></td>
+                            <td><input type="checkbox" v-model.boolean="showMidBone"/></td>
+                        </tr>
+                        <tr>
+                            <td>Show normal <br/><small>Display a vector perpendicular to the bone.</small></td>
+                            <td><input type="checkbox" v-model.boolean="showNormal"/></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2"><b>Distance</b></td>
+                        </tr>
+                        <tr>
+                            <td>Scale ({{distanceScalar}})</td>
+                            <td><input type="range" min="1" max="64" step="1" v-model.number="distanceScalar"/></td>
+                        </tr>
+                        <tr>
+                            <td>Formula <br/><small>Change the distance of the interpolated points with a curve.</small></td>
+                            <td style="text-align: center">
+                                <input type="radio" name="formula" value="fixed" v-model="formula"/>Fixed <br/> 
+                                <hr/>
+                                <input type="radio" name="formula" value="linear" v-model="formula"/>Linear <br/> 
+                                <hr/>
+                                <input type="radio" name="formula" value="smoothstep" v-model="formula"/>Smoothstep <br/> 
+                                <hr/>
+                                <input type="radio" name="formula" value="sqrt" v-model="formula"/>Square root
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Coefficient ({{coefficient}})</td>
+                            <td><input type="range" min="0.1" max="24" step="0.1" v-model.number="coefficient"/></td>
+                        </tr>
+
+                        
+                    </tbody>
+                </table>
+
+                <div style="text-align: center; padding: 16px;">
+                    <small>Copyright 2018 - DarkEclipz</small>
+                </div>
+        
+            </div>
+        </div>
+        <div class="render">
+            <canvas id="canvas"></canvas>
+        </div>
+    </div>
+
+    <script>
+    
+        function Vec2(x,y) {
+            this.x=x;
+            this.y=y;
+            if(this.y == null) this.y=this.x;
+
+            this.toString = function() {
+                return this.x + ", " + this.y;
+            }
+          
+            this.add = function(v) {
+                return new Vec2(this.x+v.x, this.y+v.y);
+            }
+            this.subtract = function(v) {
+                return new Vec2(this.x-v.x, this.y-v.y);
+            }
+            this.scale = function(scalar) {
+                return new Vec2(scalar*this.x, scalar*this.y);
+            }
+            this.vmult = function(v) {
+                return new Vec2(this.x*v.x, this.y*v.y);
+            }
+            this.dot = function(v) {
+                return this.x*v.x + this.y*v.y;
+            }
+            this.length = function() {
+                return Math.sqrt(this.x*this.x + this.y*this.y);
+            }
+            this.rotate = function(angle) {
+                let c = Math.cos(angle);
+                let s = Math.sin(angle);
+                return new Vec2( c * this.x + -s * this.y, s * this.x + c * this.y );
+            }
+            this.distance = function(v) {
+                x = this.x-v.x; y = this.y-v.y;
+                return Math.sqrt(x*x + y*y);
+            }
+            this.apply = function(f) {
+                return new Vec2(f(this.x), f(this.y));
+            }
+            this.floor = function() {
+                return this.apply(Math.floor);
+            }
+            this.fract = function() {
+                return this.subtract(this.apply(Math.floor));
+            }
+            this.normal = function() {
+                return new Vec2(this.y, -this.x);
+            }
+            this.normalize = function() {
+                var l = this.length();
+                return new Vec2(this.x / l, this.y / l);
+            }
+            this.cross = function(v) {
+                return this.length() * v.length () * this.angle(v);
+            }
+        }
+
+        let canvas = document.getElementById('canvas');
+        canvas.width = window.innerWidth * canvasWidth;
+        canvas.height = window.innerHeight;
+        let ctx = canvas.getContext('2d');
+
+        let drawingSettings = {
+            jointSize: 3,
+            boneSize: 2,
+            scale: 6
+        }
+
+        let vMoveTo = function(v) {
+            ctx.moveTo(v.x, v.y);
+        }
+
+        let vLineTo = function(v) {
+            ctx.lineTo(v.x, v.y);
+        }
+
+        let vJoint = function(v) {
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(v.x, v.y, drawingSettings.jointSize, 0, 2*Math.PI);
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        let vBone = function(v, u) {
+            ctx.lineWidth = drawingSettings.boneSize;
+            ctx.beginPath();
+            vMoveTo(v);
+            vLineTo(u);
+            ctx.stroke();
+        }
+
+        // Flip the canvas (origin in the lower left corner)
+        ctx.translate(0, canvas.height);
+        ctx.scale(1,-1);
+
+        function Bone(jointA, jointB) { 
+            this.jointStart = jointA,
+            this.jointEnd = jointB
+        }
+
+        let jointA = new Vec2(-50,0);
+        let jointB = new Vec2(50,0);
+
+        let bone = new Bone(jointA, jointB);
+
+        let drawModel = function () {
+
+            ctx.save();
+            ctx.translate(canvas.width/2, canvas.height/2);
+            ctx.scale(drawingSettings.scale, drawingSettings.scale);
+
+            ctx.strokeStyle = "#000";
+            ctx.fillStyle = "#ddd";
+
+            let midJoint = jointA.add(jointB).scale(0.5);
+            let originalJointSize = drawingSettings.jointSize;
+
+            drawingSettings.jointSize = 2;
+
+            let normal = jointA.subtract(jointB).normal().normalize();
+
+            if(vue.showNormal) {
+                ctx.strokeStyle = "red";
+                ctx.beginPath();
+                vMoveTo(midJoint);
+                vLineTo(normal.scale(32));
+                ctx.stroke();
+            }
+
+            ctx.strokeStyle = "black";
+
+            let smoothstep = function(x) {
+                if( x <= 0) return 0;
+                if( x >= 1) return 1;
+                return 3 * Math.pow(x, 2) - 2 * Math.pow(x, 3);
+            }
+
+            let pointsBottom = [];
+            let pointsTop = [];
+            for(let i=0; i <= vue.interpolationCount; ++i) {
+                
+                let dist = 32;
+                let alpha = i / vue.interpolationCount;
+                let P = jointA.scale(1-alpha).add(jointB.scale(alpha));
+
+                let scale = vue.distanceScalar;
+                let f = 1;
+
+                if(vue.formula == "sqrt") f = vue.coefficient * Math.sqrt(alpha);
+                if(vue.formula == "linear") f = vue.coefficient * alpha;
+                if(vue.formula == "smoothstep") f = vue.coefficient * smoothstep(alpha);
+
+                let Q = P.add(normal.scale( scale*f ));
+                let R = P.subtract(normal.scale( scale*f ));
+
+                vBone(P,Q);
+                vBone(P,R);
+                vJoint(Q);
+                vJoint(R);
+
+                pointsTop.push(Q);
+                pointsBottom.push(R);
+
+            }
+
+            drawingSettings.jointSize = originalJointSize;
+            vBone(bone.jointStart, bone.jointEnd);
+            vJoint(jointA);
+            vJoint(jointB);
+            if(vue.showMidBone) {
+                vJoint(midJoint);
+            }
+
+            ctx.restore();
+        }
+
+
+        //drawModel();
+
+        let vue = new Vue({
+            el: "#app",
+            data: {
+                drawingSettings: drawingSettings,
+                jointA: jointA,
+                jointB: jointB,
+                interpolationCount: 16,
+                showMidBone: false,
+                showNormal: false,
+                distanceScalar: 32,
+                formula: "sqrt",
+                coefficient: 1
+            }
+        });
+
+        let animate = function() {
+            requestAnimationFrame(animate);
+            ctx.fillStyle = "#fff";
+            ctx.fillRect(-canvas.width, canvas.height, Math.max(drawingSettings.scale, 2) * canvas.width, -Math.max(drawingSettings.scale, 2) * canvas.height);
+            drawModel();   
+        }
+
+        animate(); 
+
+    </script>
+</body>
+</html>

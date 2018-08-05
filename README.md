@@ -5,6 +5,7 @@ This repository contains various proof-of-concepts for different types of algori
  * [Game of life](https://darkeclipz.github.io/algorithmic-world-building/game-of-life.html)
  * [Voronoi](https://www.shadertoy.com/view/Xlccz2)
  * [Skeleton](https://darkeclipz.github.io/algorithmic-world-building/skeleton.html)
+ * [Joint interpolation](https://darkeclipz.github.io/algorithmic-world-building/joint-interpolation.html)
 
 ## Pseudo random number generator
 
