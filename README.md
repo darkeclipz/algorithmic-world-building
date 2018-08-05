@@ -71,3 +71,22 @@ An approach for the face would be to map point from a 2D plane onto a 3D face. T
 To draw the characters, we need points. With a provided skeleton, we can generate the point by interpolating between the joints. Based on different curves, we can shape the body to our likings. Finally, all the points should be connected, and draw a quadratic bezier between each point.
 
 ![Joint interpolation](screenshots/joint-interpolation.png)
+
+This is easier than you might think, look at the following example:
+
+```javascript
+P = new Vec2(0,0);
+Q = new Vec2(100,0);
+
+int N = 10;
+
+for(int i=0; i <= N; i++) {
+
+    let alpha = i / N; // Value between [0, 1], based on which iteration
+                       // we are in the loop.
+
+    let R =  (1-alpha) * P  + alpha * Q; // Point between P and Q based on alpha.
+
+    drawPoint(R);   
+}
+```
