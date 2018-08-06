@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Joint interpolation</title>
+    <title>Trees</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>  
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
@@ -42,81 +42,42 @@
                         </tr>
                         <tr>
                             <td width="60%">Scale ({{ drawingSettings.scale }})<br/><small>Scaling of the canvas.</small></td>
-                            <td><input type="range" min="1" max="25" step=".5" v-model="drawingSettings.scale"/></td>
+                            <td><input type="range" min="1" max="25" step=".5" v-model.number="drawingSettings.scale"/></td>
                         </tr>
                         <tr>
-                            <td width="60%">Joint size ({{ drawingSettings.jointSize }})<br/><small>Radius of the joints.</small></td>
-                            <td><input type="range" min="1" max="25" step=".5" v-model="drawingSettings.jointSize"/></td>
+                            <td width="60%">Position Y ({{ base.y }})<br/><small>Position of the object along the Y-axis.</small></td>
+                            <td><input type="range" min="-250" max="250" step="1" v-model.number="base.y"/></td>
                         </tr>
                         <tr>
-                            <td width="60%">Bone size ({{ drawingSettings.boneSize }})<br/><small>Stroke width of the bones.</small></td>
-                            <td><input type="range" min="1" max="25" step=".5" v-model="drawingSettings.boneSize"/></td>
-                        </tr>
-
-                        <tr>
-                            <td colspan="2"><b>Joint A</b></td>
-                        </tr>
-                        <tr>
-                            <td>X ({{jointA.x}})</td>
-                            <td><input type="range" min="-250" max="250" step="1" v-model.number="jointA.x"/></td>
-                        </tr>
-                        <tr>
-                            <td>Y ({{jointA.y}})</td>
-                            <td><input type="range" min="-250" max="250" step="1" v-model.number="jointA.y"/></td>
-                        </tr>
-
-                        <tr>
-                            <td colspan="2"><b>Joint B</b></td>
-                        </tr>
-                        <tr>
-                            <td>X ({{jointB.x}})</td>
-                            <td><input type="range" min="-250" max="250" step="1" v-model.number="jointB.x"/></td>
-                        </tr>
-                        <tr>
-                            <td>Y ({{jointB.y}})</td>
-                            <td><input type="range" min="-250" max="250" step="1" v-model.number="jointB.y"/></td>
-                        </tr>
-
-                        <tr>
-                            <td colspan="2"><b>Interpolation</b></td>
-                        <tr> 
-                        </tr>
-                            <td>Interpolation size ({{interpolationCount}})<br/><small>Amount of subdivisions for interpolating.</small></td>
-                            <td><input type="range" min="0" max="24" step="1" v-model.number="interpolationCount"/></td>
-                        </tr>
-                        <tr>
-                            <td>Show mid joint <br/><small>Display a joint at the middle of the bone.</small></td>
-                            <td><input type="checkbox" v-model.boolean="showMidBone"/></td>
-                        </tr>
-                        <tr>
-                            <td>Show normal <br/><small>Display a vector perpendicular to the bone.</small></td>
-                            <td><input type="checkbox" v-model.boolean="showNormal"/></td>
-                        </tr>
-
-                        <tr>
-                            <td colspan="2"><b>Distance</b></td>
-                        </tr>
-                        <tr>
-                            <td>Scale ({{distanceScalar}})</td>
-                            <td><input type="range" min="1" max="64" step="1" v-model.number="distanceScalar"/></td>
-                        </tr>
-                        <tr>
-                            <td>Formula <br/><small>Change the distance of the interpolated points with a curve.</small></td>
-                            <td style="text-align: center">
-                                <input type="radio" name="formula" value="fixed" v-model="formula"/>Fixed <br/> 
-                                <hr/>
-                                <input type="radio" name="formula" value="linear" v-model="formula"/>Linear <br/> 
-                                <hr/>
-                                <input type="radio" name="formula" value="smoothstep" v-model="formula"/>Smoothstep <br/> 
-                                <hr/>
-                                <input type="radio" name="formula" value="sqrt" v-model="formula"/>Square root
+                            <td colspan="2">
+                                <b>Recursion</b>
                             </td>
                         </tr>
                         <tr>
-                            <td>Coefficient ({{coefficient}})</td>
-                            <td><input type="range" min="0.1" max="24" step="0.1" v-model.number="coefficient"/></td>
+                            <td>Max depth ({{maxDepth}}) <br/><small>The amount of recursive steps.</small></td>
+                            <td><input type="range" min="1" max="12" step="1" v-model.number="maxDepth"/></td>
                         </tr>
-
+                        <tr>
+                            <td colspan="2">
+                                <b>Branching</b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Branch length ({{branchLength}}) <br/><small>Change the length of the branches.</small></td>
+                            <td><input type="range" min="1" max="200" step="1" v-model.number="branchLength"/></td>
+                        </tr>
+                        <tr>
+                            <td>Damping ({{branchDamping}}) <br/><small>Change how much the length is decreased over each recursive step.</small></td>
+                            <td><input type="range" min="0.01" max="1" step="0.0025" v-model.number="branchDamping"/></td>
+                        </tr>
+                        <tr>
+                            <td>Angle ({{branchAngle}}) <br/><small>Change the angle of the branches.</small></td>
+                            <td><input type="range" min="-3.14159265" max="3.14159265" step="0.01" v-model.number="branchAngle"/></td>
+                        </tr>
+                        <tr>
+                            <td>Branch length stdev ({{branchLengthStdev}}) <br/><small>Standard deviation of the branch length.</small></td>
+                            <td><input type="range" min="0" max="100" step="1" v-model.number="branchLengthStdev"/></td>
+                        </tr>
                         
                     </tbody>
                 </table>
@@ -134,6 +95,17 @@
 
     <script>
     
+        function map(x, a, b, c, d) {
+
+            // let r1 = b-a;            // find the range of [a,b]
+            // let xNorm = (x-b)/r1;    // normalize onto the range of [a,b]
+            // let r2 = d-c;            // find the range of [c,d]
+            // return xNorm * r2 + d;   // map x to the range of [c,d]
+            /// ... is algebraically equivalent to:
+            return ( (x-b) * (d-c) + d ) / (b - a);
+
+        }
+
         function Vec2(x,y) {
             this.x=x;
             this.y=y;
@@ -199,7 +171,7 @@
         let drawingSettings = {
             jointSize: 3,
             boneSize: 2,
-            scale: 6
+            scale: 2
         }
 
         let vMoveTo = function(v) {
@@ -235,10 +207,32 @@
             this.jointEnd = jointB
         }
 
-        let jointA = new Vec2(-50,0);
-        let jointB = new Vec2(50,0);
+        let base = new Vec2(0, -150);
+        let up = new Vec2(0, 1);
 
-        let bone = new Bone(jointA, jointB);
+        let branch = function(angle, depth, parent) {
+
+            drawingSettings.jointSize = vue.maxDepth - depth;
+            drawingSettings.boneSize = vue.maxDepth - depth;
+
+            if(depth == vue.maxDepth) return;
+
+            let alpha = depth / vue.maxDepth;
+
+            let scale = new Vec2(1,1).scale(vue.branchLength*Math.pow((1-vue.branchDamping), depth));
+            let L = up.rotate(angle + vue.branchAngle).vmult(scale).add(parent);
+            let R = up.rotate(angle - vue.branchAngle).vmult(scale).add(parent);
+
+            vBone(parent, L);
+            vBone(parent, R);
+
+            vJoint(L);
+            vJoint(R);
+
+            branch(angle + vue.branchAngle, depth+1, L);
+            branch(angle - vue.branchAngle, depth+1, R);
+            
+        }
 
         let drawModel = function () {
 
@@ -249,64 +243,8 @@
             ctx.strokeStyle = "#000";
             ctx.fillStyle = "#ddd";
 
-            let midJoint = jointA.add(jointB).scale(0.5);
-            let originalJointSize = drawingSettings.jointSize;
-
-            drawingSettings.jointSize = 2;
-
-            let normal = jointA.subtract(jointB).normal().normalize();
-
-            if(vue.showNormal) {
-                ctx.strokeStyle = "red";
-                ctx.beginPath();
-                vMoveTo(midJoint);
-                vLineTo(normal.scale(32));
-                ctx.stroke();
-            }
-
-            ctx.strokeStyle = "black";
-
-            let smoothstep = function(x) {
-                if( x <= 0) return 0;
-                if( x >= 1) return 1;
-                return 3 * Math.pow(x, 2) - 2 * Math.pow(x, 3);
-            }
-
-            let pointsBottom = [];
-            let pointsTop = [];
-            for(let i=0; i <= vue.interpolationCount; ++i) {
-                
-                let dist = 32;
-                let alpha = i / vue.interpolationCount;
-                let P = jointA.scale(1-alpha).add(jointB.scale(alpha));
-
-                let scale = vue.distanceScalar;
-                let f = 1;
-
-                if(vue.formula == "sqrt") f = vue.coefficient * Math.sqrt(alpha);
-                if(vue.formula == "linear") f = vue.coefficient * alpha;
-                if(vue.formula == "smoothstep") f = vue.coefficient * smoothstep(alpha);
-
-                let Q = P.add(normal.scale( scale*f ));
-                let R = P.subtract(normal.scale( scale*f ));
-
-                vBone(P,Q);
-                vBone(P,R);
-                vJoint(Q);
-                vJoint(R);
-
-                pointsTop.push(Q);
-                pointsBottom.push(R);
-
-            }
-
-            drawingSettings.jointSize = originalJointSize;
-            vBone(bone.jointStart, bone.jointEnd);
-            vJoint(jointA);
-            vJoint(jointB);
-            if(vue.showMidBone) {
-                vJoint(midJoint);
-            }
+            vJoint(base);
+            branch(0, 0, base);
 
             ctx.restore();
         }
@@ -318,14 +256,12 @@
             el: "#app",
             data: {
                 drawingSettings: drawingSettings,
-                jointA: jointA,
-                jointB: jointB,
-                interpolationCount: 16,
-                showMidBone: false,
-                showNormal: false,
-                distanceScalar: 32,
-                formula: "sqrt",
-                coefficient: 1
+                maxDepth: 8,
+                branchAngle: 0.428,
+                branchDamping: .21,
+                branchLength: 68,
+                base: base,
+                branchLengthStdev: 8
             }
         });
 
