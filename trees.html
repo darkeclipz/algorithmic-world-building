@@ -151,25 +151,6 @@
 
     <script>
 
-        let seed = 0;
-        let random = function() {
-            let x = Math.sin(seed++ * 4871452.47) * 87175.89;
-            return x - Math.floor(x);
-        };
-
-        function map(x, a, b, c, d) {
-
-            // let r1 = b-a;            // find the range of [a,b]
-            // let xNorm = (x-b)/r1;    // normalize onto the range of [a,b]
-            // let r2 = d-c;            // find the range of [c,d]
-            // return xNorm * r2 + d;   // map x to the range of [c,d]
-
-            /// ... is algebraically equivalent to:
-
-            return ( (x-b) * (d-c) + d ) / (b - a);
-
-        }
-
         function Vec2(x,y) {
             this.x=x;
             this.y=y;
@@ -262,24 +243,36 @@
             ctx.stroke();
         }
 
-        // Flip the canvas (origin in the lower left corner)
-        ctx.translate(0, canvas.height);
-        ctx.scale(1,-1);
-
         function Bone(jointA, jointB) { 
             this.jointStart = jointA,
             this.jointEnd = jointB
         }
 
-        let base = new Vec2(0, -150);
-        let up = new Vec2(0, 1);
+        let seed = 0;
+        let random = function() {
+            let x = Math.sin(seed++ * 4871452.47) * 87175.89;
+            return x - Math.floor(x);
+        };
+
+        function map(x, a, b, c, d) {
+
+            // let r1 = b-a;            // find the range of [a,b]
+            // let xNorm = (x-b)/r1;    // normalize onto the range of [a,b]
+            // let r2 = d-c;            // find the range of [c,d]
+            // return xNorm * r2 + d;   // map x to the range of [c,d]
+
+            /// ... is algebraically equivalent to:
+
+            return ( (x-b) * (d-c) + d ) / (b - a);
+
+        }
 
         let probabilityUniform = function(stdev) {
-            return map(random(), 0, 1, -stdev/2, stdev/2);
+            return map(random(), 0, 1, stdev, stdev);
         }
 
         let probabilityBiased = function(stdev) {
-            return map( (random() + random()) / 2, 0, 1, -stdev/2, stdev/2);
+            return map( (random() + random()) / 2, 0, 1, -stdev, stdev);
         }
 
         let probabilityNormal = function(stdev) {
@@ -287,18 +280,15 @@
             for(let i=0; i < samples; i++) 
                 r += random();
             r /= samples;
-            return map(r, 0, 1, -stdev/2, stdev/2);
+            return map(r, 0, 1, -stdev, stdev);
         }
 
         let branch = function(angle, depth, parent) {
 
-            
             drawingSettings.jointSize = vue.maxDepth - depth;
             drawingSettings.boneSize = vue.maxDepth - depth;
 
             if(depth == vue.maxDepth) return;
-
-            let alpha = depth / vue.maxDepth;
 
             // Random branch length...
 
@@ -347,8 +337,11 @@
                 rightRandomBranchAngle *=  inverseDamping;
             }
 
-            let L = up.rotate(angle + vue.branchAngle + leftRandomBranchAngle).vmult(leftScale).add(parent);
-            let R = up.rotate(angle - vue.branchAngle + rightRandomBranchAngle).vmult(rightScale).add(parent);
+            let leftAngle = angle + vue.branchAngle + leftRandomBranchAngle;
+            let rightAngle = angle - vue.branchAngle + rightRandomBranchAngle;
+
+            let L = up.rotate(leftAngle).vmult(leftScale).add(parent);
+            let R = up.rotate(rightAngle).vmult(rightScale).add(parent);
 
             vBone(parent, L);
             vBone(parent, R);
@@ -356,10 +349,13 @@
             vJoint(L);
             vJoint(R);
 
-            branch(angle + vue.branchAngle + leftRandomBranchAngle, depth+1, L);
-            branch(angle - vue.branchAngle + rightRandomBranchAngle, depth+1, R);
+            branch(leftAngle, depth+1, L);
+            branch(rightAngle, depth+1, R);
             
         }
+
+        let base = new Vec2(0, -150);
+        let up = new Vec2(0, 1);
 
         let drawModel = function () {
 
@@ -386,9 +382,9 @@
                 branchDamping: .165,
                 branchLength: 46,
                 base: base,
-                branchLengthStdev: 200,
+                branchLengthStdev: 115,
                 branchLengthPDF: 'normal',
-                branchAngleStdev: 1.168,
+                branchAngleStdev: 0.468,
                 branchAnglePDF: 'normal',
                 wind: false,
                 windScale: 1,
@@ -397,6 +393,10 @@
                 inverseDampingFactor: 2
             }
         });
+
+        // Flip the canvas (origin in the lower left corner)
+        ctx.translate(0, canvas.height);
+        ctx.scale(1,-1);
 
         let animate = function() {
             requestAnimationFrame(animate);
