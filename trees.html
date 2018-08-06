@@ -269,7 +269,7 @@
         }
 
         let probabilityUniform = function(stdev) {
-            return map(random(), 0, 1, stdev, stdev);
+            return map(random(), 0, 1, -stdev, stdev);
         }
 
         let probabilityBiased = function(stdev) {
