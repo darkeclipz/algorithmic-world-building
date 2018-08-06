@@ -130,7 +130,7 @@ let branch = function(angle, depth, parent) {
 
 ![Tree](screenshots/tree.png)
 
-To add a more natural look, we can change the length of the branches with a certain standard deviation and a probability function.
+To add a more natural look, we can change the length of the branches by adding a certain standard deviation multiplied by a probability function.
 
 ## Todo
 
