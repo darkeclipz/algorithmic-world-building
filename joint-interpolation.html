@@ -260,7 +260,7 @@
                 ctx.strokeStyle = "red";
                 ctx.beginPath();
                 vMoveTo(midJoint);
-                vLineTo(normal.scale(32));
+                vLineTo(normal.scale(32).add(midJoint));
                 ctx.stroke();
             }
 
