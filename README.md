@@ -82,10 +82,10 @@ int N = 10;
 
 for(int i=0; i <= N; i++) {
 
-    let alpha = i / N; // Value between [0, 1], based on which iteration
+    float alpha = i / N; // Value between [0, 1], based on which iteration
                        // we are in the loop.
 
-    let R =  (1-alpha) * P  + alpha * Q; // Point between P and Q based on alpha.
+    Vec2 R =  (1-alpha) * P  + alpha * Q; // Point between P and Q based on alpha.
 
     drawPoint(R);   
 }
