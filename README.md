@@ -6,6 +6,7 @@ This repository contains various proof-of-concepts for different types of algori
  * [Voronoi](https://www.shadertoy.com/view/Xlccz2)
  * [Skeleton](https://darkeclipz.github.io/algorithmic-world-building/skeleton.html)
  * [Joint interpolation](https://darkeclipz.github.io/algorithmic-world-building/joint-interpolation.html)
+ * [Trees](https://darkeclipz.github.io/algorithmic-world-building/trees.html)
 
 ## Math used
 
@@ -127,7 +128,7 @@ let branch = function(angle, depth, parent) {
 }
 ```
 
-![Trees](screenshots/trees.png)
+![Tree](screenshots/tree.png)
 
 To add a more natural look, we can change the length of the branches with a certain standard deviation and a probability function.
 
