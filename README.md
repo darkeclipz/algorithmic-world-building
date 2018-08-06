@@ -7,6 +7,15 @@ This repository contains various proof-of-concepts for different types of algori
  * [Skeleton](https://darkeclipz.github.io/algorithmic-world-building/skeleton.html)
  * [Joint interpolation](https://darkeclipz.github.io/algorithmic-world-building/joint-interpolation.html)
 
+## Math used
+
+Most of the math used to build this library is:
+
+ * Vector Geometry
+ * Probability Theory
+ * Trigonometry
+ * Basic algebra; know your functions
+
 ## Pseudo random number generator
 
 We want a seed based pseudo random number generator. The main reason for this is, we want predictive random numbers e.g.: if we start at a given seed, it should always generate the same sequence of random numbers. This property can be used to regenerate the same entity. 
@@ -93,7 +102,7 @@ for(int i=0; i <= N; i++) {
 
 We can get the normal vector (red line in the illustration), and normalize it so it has unit length. Then at each interpolated point we get the top point with `R + normal` and the bottom point with `R - normal`. We can then create a function `f` that has `alpha` as input, and gives a value between [0, 1]. If we calculate `(R + normal) * f(alpha)` this results in the top points distance following a curve, given by `f`.
 
-## Trees
+## Trees 
 
 Trees are relatively easy to draw if we do this with recursion. In the simplest case, we start with a root node. Then we call the recursive function for the root node. The recursive functions requires an angle, and the current depth, as well as a max depth as a global parameter. In the recursive step, we find the two points, and add the rotation to them. Then we call the recursive step, and add our new angle to the previous (to preserve all the rotations), and the parent node (to preserve the translation). The following pseudo-code should give an idea for the recursive function:
 
