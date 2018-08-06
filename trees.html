@@ -24,6 +24,7 @@
         tr:hover { background-color: #eee; }
         input { width: 100%; font-size: 9pt; }
         hr { border-top: 0; border-bottom: 1px #ddd dashed;}
+        img { border: 1px #ddd solid; }
 
     </style>
 </head>
@@ -76,10 +77,10 @@
                         </tr>
                         <tr>
                             <td>Branch length stdev ({{branchLengthStdev}}) <br/><small>Standard deviation of the branch length.</small></td>
-                            <td><input type="range" min="0" max="100" step="1" v-model.number="branchLengthStdev"/></td>
+                            <td><input type="range" min="0" max="600" step="1" v-model.number="branchLengthStdev"/></td>
                         </tr>
                         <tr>
-                            <td>Probability distribution ({{branchLengthPDF}}) <br/><small>Probability distribution used for random branch length.</small></td>
+                            <td>Probability distribution (length)<br/><small>Probability distribution used for random branch length.</small></td>
                             <td style="text-align:center">
                                 <select v-model="branchLengthPDF">
                                     <option value="uniform">Uniform</option>
@@ -87,16 +88,59 @@
                                     <option value="normal">Normal</option>
                                 </select>
                                 <hr/>
-                                <img style="width: 128px; height: 64px;"/>
+                                <img style="width: 128px; height: 64px;" src="images/distribution-uniform.png" v-if="branchLengthPDF == 'uniform'"/>
+                                <img style="width: 128px; height: 64px;" src="images/distribution-biased.png" v-if="branchLengthPDF == 'biased'"/>
+                                <img style="width: 128px; height: 64px;" src="images/distribution-normal.png" v-if="branchLengthPDF == 'normal'"/>
                             </td>
                         </tr>
+                        <tr>
+                            <td>Branch angle stdev ({{branchAngleStdev}}) <br/><small>Standard deviation of the branch angle.</small></td>
+                            <td><input type="range" min="-3.14159265" max="3.14159265" step="0.01" v-model.number="branchAngleStdev"/></td>
+                        </tr>
+                        <tr>
+                            <td>Probability distribution (angle)<br/><small>Probability distribution used for random branch angle.</small></td>
+                            <td style="text-align:center">
+                                <select v-model="branchAnglePDF">
+                                    <option value="uniform">Uniform</option>
+                                    <option value="biased">Biased</option>
+                                    <option value="normal">Normal</option>
+                                </select>
+                                <hr/>
+                                <img style="width: 128px; height: 64px;" src="images/distribution-uniform.png" v-if="branchAnglePDF == 'uniform'"/>
+                                <img style="width: 128px; height: 64px;" src="images/distribution-biased.png" v-if="branchAnglePDF == 'biased'"/>
+                                <img style="width: 128px; height: 64px;" src="images/distribution-normal.png" v-if="branchAnglePDF == 'normal'"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Inverse damping<br/><small>Damp the curve, so it curves less at the root.</small></td>
+                            <td><input type="checkbox" v-model.boolean="inverseDamping"/></td>
+                        </tr>
+                        <tr>
+                            <td>Inverse damping factor ({{inverseDampingFactor}})<br/><small>Changes the curve of the inverse damping.</small></td>
+                            <td><input type="range" min="0" max="10" step="0.05" v-model.number="inverseDampingFactor"/></td>
+                        </tr>
+                        <!-- <tr>
+                            <td colspan="2"><b>Wind</b> | <small>not implemented</small></td>
+                        </tr>
+                        <tr>
+                            <td>Wind<br/><small>Enable/disable the wind.</small></td>
+                            <td><input type="checkbox" v-model.boolean="wind" disabled/></td>
+                        </tr>
+                        <tr>
+                            <td>Noise function<br/><small>The function used to generate the noise.</small></td>
+                            <td style="text-align: center;">Perlin noise (2D)<hr/><img style="width: 128px; height: 64px;" src="images/perlin2d-128-64.png"/></td>
+                        </tr>
+                        <tr>
+                            <td>Scale ({{windScale}})<br/><small>The scale of the noise.</small></td>
+                            <td><input type="range" min="0" max="100" step="1" v-model.number="windScale" disabled/></td>
+                        </tr>
+                        <tr>
+                            <td>Strength ({{windStrength}})<small><br/>The strength of the noise.</small></td>
+                            <td><input type="range" min="0" max="100" step="1" v-model.number="windStrength" disabled/></td>
+                        </tr> -->
                         
                     </tbody>
                 </table>
-
-                <div style="text-align: center; padding: 16px;">
-                    <small>Copyright 2018 - DarkEclipz</small>
-                </div>
         
             </div>
         </div>
@@ -106,7 +150,13 @@
     </div>
 
     <script>
-    
+
+        let seed = 0;
+        let random = function() {
+            let x = Math.sin(seed++ * 4871452.47) * 87175.89;
+            return x - Math.floor(x);
+        };
+
         function map(x, a, b, c, d) {
 
             // let r1 = b-a;            // find the range of [a,b]
@@ -224,8 +274,25 @@
         let base = new Vec2(0, -150);
         let up = new Vec2(0, 1);
 
+        let probabilityUniform = function(stdev) {
+            return map(random(), 0, 1, -stdev/2, stdev/2);
+        }
+
+        let probabilityBiased = function(stdev) {
+            return map( (random() + random()) / 2, 0, 1, -stdev/2, stdev/2);
+        }
+
+        let probabilityNormal = function(stdev) {
+            let r = 0, samples = 8;
+            for(let i=0; i < samples; i++) 
+                r += random();
+            r /= samples;
+            return map(r, 0, 1, -stdev/2, stdev/2);
+        }
+
         let branch = function(angle, depth, parent) {
 
+            
             drawingSettings.jointSize = vue.maxDepth - depth;
             drawingSettings.boneSize = vue.maxDepth - depth;
 
@@ -233,9 +300,55 @@
 
             let alpha = depth / vue.maxDepth;
 
-            let scale = new Vec2(1,1).scale(vue.branchLength*Math.pow((1-vue.branchDamping), depth));
-            let L = up.rotate(angle + vue.branchAngle).vmult(scale).add(parent);
-            let R = up.rotate(angle - vue.branchAngle).vmult(scale).add(parent);
+            // Random branch length...
+
+            let leftRandomBranchLength;
+            let rightRandomBranchLength;
+            
+            if(vue.branchLengthPDF == "normal") {
+                leftRandomBranchLength = probabilityNormal( vue.branchLengthStdev );
+                rightRandomBranchLength = probabilityNormal( vue.branchLengthStdev );
+            }
+            if(vue.branchLengthPDF == "biased") {
+                leftRandomBranchLength = probabilityBiased( vue.branchLengthStdev );
+                rightRandomBranchLength = probabilityBiased( vue.branchLengthStdev );
+            }
+            if(vue.branchLengthPDF == "uniform") {
+                leftRandomBranchLength = probabilityUniform( vue.branchLengthStdev );
+                rightRandomBranchLength = probabilityUniform( vue.branchLengthStdev );
+            }
+     
+            let damping = Math.pow( 1 - vue.branchDamping, depth );
+
+            let leftScale = new Vec2(1,1).scale( (vue.branchLength + leftRandomBranchLength) * damping );
+            let rightScale = new Vec2(1,1).scale( (vue.branchLength + rightRandomBranchLength) * damping );
+
+            // Random branch angle ...
+
+            let leftRandomBranchAngle;
+            let rightRandomBranchAngle;
+
+             if(vue.branchAnglePDF == "normal") {
+                leftRandomBranchAngle = probabilityNormal( vue.branchAngleStdev );
+                rightRandomBranchAngle = probabilityNormal( vue.branchAngleStdev );
+            }
+            if(vue.branchAnglePDF == "biased") {
+                leftRandomBranchAngle = probabilityBiased( vue.branchAngleStdev );
+                rightRandomBranchAngle = probabilityBiased( vue.branchAngleStdev );
+            }
+            if(vue.branchAnglePDF == "uniform") {
+                leftRandomBranchAngle = probabilityUniform( vue.branchAngleStdev );
+                rightRandomBranchAngle = probabilityUniform( vue.branchAngleStdev );
+            }      
+
+            if(vue.inverseDamping) {
+                let inverseDamping = Math.pow( vue.branchDamping, vue.maxDepth - depth - vue.inverseDampingFactor );
+                leftRandomBranchAngle *= inverseDamping;
+                rightRandomBranchAngle *=  inverseDamping;
+            }
+
+            let L = up.rotate(angle + vue.branchAngle + leftRandomBranchAngle).vmult(leftScale).add(parent);
+            let R = up.rotate(angle - vue.branchAngle + rightRandomBranchAngle).vmult(rightScale).add(parent);
 
             vBone(parent, L);
             vBone(parent, R);
@@ -243,13 +356,14 @@
             vJoint(L);
             vJoint(R);
 
-            branch(angle + vue.branchAngle, depth+1, L);
-            branch(angle - vue.branchAngle, depth+1, R);
+            branch(angle + vue.branchAngle + leftRandomBranchAngle, depth+1, L);
+            branch(angle - vue.branchAngle + rightRandomBranchAngle, depth+1, R);
             
         }
 
         let drawModel = function () {
 
+            seed = 0;
             ctx.save();
             ctx.translate(canvas.width/2, canvas.height/2);
             ctx.scale(drawingSettings.scale, drawingSettings.scale);
@@ -263,20 +377,24 @@
             ctx.restore();
         }
 
-
-        //drawModel();
-
         let vue = new Vue({
             el: "#app",
             data: {
                 drawingSettings: drawingSettings,
                 maxDepth: 8,
                 branchAngle: 0.428,
-                branchDamping: .21,
-                branchLength: 68,
+                branchDamping: .165,
+                branchLength: 46,
                 base: base,
-                branchLengthStdev: 8,
-                branchLengthPDF: 'normal'
+                branchLengthStdev: 200,
+                branchLengthPDF: 'normal',
+                branchAngleStdev: 1.168,
+                branchAnglePDF: 'normal',
+                wind: false,
+                windScale: 1,
+                windStrength: 1,
+                inverseDamping: false,
+                inverseDampingFactor: 2
             }
         });
 
