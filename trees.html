@@ -78,6 +78,18 @@
                             <td>Branch length stdev ({{branchLengthStdev}}) <br/><small>Standard deviation of the branch length.</small></td>
                             <td><input type="range" min="0" max="100" step="1" v-model.number="branchLengthStdev"/></td>
                         </tr>
+                        <tr>
+                            <td>Probability distribution ({{branchLengthPDF}}) <br/><small>Probability distribution used for random branch length.</small></td>
+                            <td style="text-align:center">
+                                <select v-model="branchLengthPDF">
+                                    <option value="uniform">Uniform</option>
+                                    <option value="biased">Biased</option>
+                                    <option value="normal">Normal</option>
+                                </select>
+                                <hr/>
+                                <img style="width: 128px; height: 64px;"/>
+                            </td>
+                        </tr>
                         
                     </tbody>
                 </table>
@@ -101,7 +113,9 @@
             // let xNorm = (x-b)/r1;    // normalize onto the range of [a,b]
             // let r2 = d-c;            // find the range of [c,d]
             // return xNorm * r2 + d;   // map x to the range of [c,d]
+
             /// ... is algebraically equivalent to:
+
             return ( (x-b) * (d-c) + d ) / (b - a);
 
         }
@@ -261,7 +275,8 @@
                 branchDamping: .21,
                 branchLength: 68,
                 base: base,
-                branchLengthStdev: 8
+                branchLengthStdev: 8,
+                branchLengthPDF: 'normal'
             }
         });
 

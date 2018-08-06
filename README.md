@@ -93,6 +93,14 @@ for(int i=0; i <= N; i++) {
 
 We can get the normal vector (red line in the illustration), and normalize it so it has unit length. Then at each interpolated point we get the top point with `R + normal` and the bottom point with `R - normal`. We can then create a function `f` that has `alpha` as input, and gives a value between [0, 1]. If we calculate `(R + normal) * f(alpha)` this results in the top points distance following a curve, given by `f`.
 
+## Trees
+
+Trees are relatively easy to draw if we do this with recursion. In the simplest case, we start with a root node. Then we call the recursive function for the root node. The recursive functions requires an angle, and the current depth, as well as a max depth as a global parameter. In the recursive step, we find the two points, and add the rotation to them. Then we call the recursive step, and add our new angle to the previous (to preserve all the rotations), and the parent node (to preserve the translation).
+
+![Trees](screenshots/trees.png)
+
+To add a more natural look, we can change the length of the branches with a certain standard deviation and a probability function.
+
 ## Todo
 
  - Perlin noise
