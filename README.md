@@ -110,20 +110,20 @@ Trees are relatively easy to draw if we do this with recursion. In the simplest 
 ```javascript
 let branch = function(angle, depth, parent) {
 
-    if(depth == vue.maxDepth) return;
+    if(depth == maxDepth) return;
 
     let alpha = depth / maxDepth;
 
-    let scale = new Vec2(1,1).scale(branchLength * Math.pow((1-vue.branchDamping), depth));
-    let L = up.rotate(angle + branchAngle).vmult(scale).add(parent);
-    let R = up.rotate(angle - branchAngle).vmult(scale).add(parent);
+    let scale = new Vec2(1,1).scale(branchLength * Math.pow((1-branchDamping), depth));
+    let L = new Vec2(0,1).rotate(angle + branchAngle).vmult(scale).add(parent);
+    let R = new Vec2(0,1).rotate(angle - branchAngle).vmult(scale).add(parent);
 
     // Draw both branches:
     // 1. parent to L
     // 2. parent to R
 
-    branch(angle + vue.branchAngle, depth+1, L);
-    branch(angle - vue.branchAngle, depth+1, R);
+    branch(angle + branchAngle, depth+1, L);
+    branch(angle - branchAngle, depth+1, R);
     
 }
 ```
