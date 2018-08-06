@@ -65,7 +65,6 @@ export class Algorithms {
 
     }
 
-
     public sumNeighbours(t: Tilemap<boolean>, x: number, y: number): number {
         let n = this.getNeighbours(t, x, y);
         let sum = 0;
