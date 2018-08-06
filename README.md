@@ -95,7 +95,28 @@ We can get the normal vector (red line in the illustration), and normalize it so
 
 ## Trees
 
-Trees are relatively easy to draw if we do this with recursion. In the simplest case, we start with a root node. Then we call the recursive function for the root node. The recursive functions requires an angle, and the current depth, as well as a max depth as a global parameter. In the recursive step, we find the two points, and add the rotation to them. Then we call the recursive step, and add our new angle to the previous (to preserve all the rotations), and the parent node (to preserve the translation).
+Trees are relatively easy to draw if we do this with recursion. In the simplest case, we start with a root node. Then we call the recursive function for the root node. The recursive functions requires an angle, and the current depth, as well as a max depth as a global parameter. In the recursive step, we find the two points, and add the rotation to them. Then we call the recursive step, and add our new angle to the previous (to preserve all the rotations), and the parent node (to preserve the translation). The following pseudo-code should give an idea for the recursive function:
+
+```javascript
+let branch = function(angle, depth, parent) {
+
+    if(depth == vue.maxDepth) return;
+
+    let alpha = depth / maxDepth;
+
+    let scale = new Vec2(1,1).scale(branchLength * Math.pow((1-vue.branchDamping), depth));
+    let L = up.rotate(angle + branchAngle).vmult(scale).add(parent);
+    let R = up.rotate(angle - branchAngle).vmult(scale).add(parent);
+
+    // Draw both branches:
+    // 1. parent to L
+    // 2. parent to R
+
+    branch(angle + vue.branchAngle, depth+1, L);
+    branch(angle - vue.branchAngle, depth+1, R);
+    
+}
+```
 
 ![Trees](screenshots/trees.png)
 
