@@ -114,7 +114,7 @@ The following pseudo-code should give an idea for the recursive function:
 ```javascript
 let branch = function(angle, depth, parent) {
 
-    if(depth == maxDepth) return;
+    if(depth >= maxDepth) return;
 
     let alpha = depth / maxDepth;
 
