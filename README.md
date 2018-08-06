@@ -105,7 +105,11 @@ We can get the normal vector (red line in the illustration), and normalize it so
 
 ## Trees 
 
-Trees are relatively easy to draw if we do this with recursion. In the simplest case, we start with a root node. Then we call the recursive function for the root node. The recursive functions requires an angle, and the current depth, as well as a max depth as a global parameter. In the recursive step, we find the two points, and add the rotation to them. Then we call the recursive step, and add our new angle to the previous (to preserve all the rotations), and the parent node (to preserve the translation). The following pseudo-code should give an idea for the recursive function:
+Trees are relatively easy to draw if we do this with recursion. In the simplest case, we start with a root node. Then we call the recursive function for the root node. The recursive functions requires an angle, and the current depth, as well as a max depth as a global parameter. In the recursive step, we find the two points, and add the rotation to them. Then we call the recursive step, and add our new angle to the previous (to preserve all the rotations), and the parent node (to preserve the translation). 
+
+![Tree](screenshots/tree.png)
+
+The following pseudo-code should give an idea for the recursive function:
 
 ```javascript
 let branch = function(angle, depth, parent) {
@@ -127,8 +131,6 @@ let branch = function(angle, depth, parent) {
     
 }
 ```
-
-![Tree](screenshots/tree.png)
 
 To add a more natural look, we can change the length of the branches by adding a certain standard deviation multiplied by a probability function.
 
