@@ -100,3 +100,4 @@ We can get the normal vector (red line in the illustration), and normalize it so
  - Flood fill area (for tilemaps)
  - Distance map (for tilemaps)
  - Probability density functions
+ - Biomes
