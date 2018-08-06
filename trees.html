@@ -82,15 +82,15 @@
                         <tr>
                             <td>Probability distribution (length)<br/><small>Probability distribution used for random branch length.</small></td>
                             <td style="text-align:center">
+                                <img style="width: 128px; height: 64px;" src="images/distribution-uniform.png" v-if="branchLengthPDF == 'uniform'"/>
+                                <img style="width: 128px; height: 64px;" src="images/distribution-biased.png" v-if="branchLengthPDF == 'biased'"/>
+                                <img style="width: 128px; height: 64px;" src="images/distribution-normal.png" v-if="branchLengthPDF == 'normal'"/>
+                                <hr/>
                                 <select v-model="branchLengthPDF">
                                     <option value="uniform">Uniform</option>
                                     <option value="biased">Biased</option>
                                     <option value="normal">Normal</option>
                                 </select>
-                                <hr/>
-                                <img style="width: 128px; height: 64px;" src="images/distribution-uniform.png" v-if="branchLengthPDF == 'uniform'"/>
-                                <img style="width: 128px; height: 64px;" src="images/distribution-biased.png" v-if="branchLengthPDF == 'biased'"/>
-                                <img style="width: 128px; height: 64px;" src="images/distribution-normal.png" v-if="branchLengthPDF == 'normal'"/>
                             </td>
                         </tr>
                         <tr>
@@ -100,15 +100,16 @@
                         <tr>
                             <td>Probability distribution (angle)<br/><small>Probability distribution used for random branch angle.</small></td>
                             <td style="text-align:center">
+
+                                <img style="width: 128px; height: 64px;" src="images/distribution-uniform.png" v-if="branchAnglePDF == 'uniform'"/>
+                                <img style="width: 128px; height: 64px;" src="images/distribution-biased.png" v-if="branchAnglePDF == 'biased'"/>
+                                <img style="width: 128px; height: 64px;" src="images/distribution-normal.png" v-if="branchAnglePDF == 'normal'"/>
+                                <hr/>
                                 <select v-model="branchAnglePDF">
                                     <option value="uniform">Uniform</option>
                                     <option value="biased">Biased</option>
                                     <option value="normal">Normal</option>
                                 </select>
-                                <hr/>
-                                <img style="width: 128px; height: 64px;" src="images/distribution-uniform.png" v-if="branchAnglePDF == 'uniform'"/>
-                                <img style="width: 128px; height: 64px;" src="images/distribution-biased.png" v-if="branchAnglePDF == 'biased'"/>
-                                <img style="width: 128px; height: 64px;" src="images/distribution-normal.png" v-if="branchAnglePDF == 'normal'"/>
                             </td>
                         </tr>
                         <tr>
