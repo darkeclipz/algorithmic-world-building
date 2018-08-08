@@ -1,0 +1,189 @@
+<!DOCTYPE <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>L-system</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>  
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <script>
+        let canvasWidth = .7;
+    </script>
+    <style>
+        body { font-family: "Roboto"; font-size: 16pt; padding: 0; margin: 0; }
+        .container { width: 100%; height: 100%; position: absolute; overflow: hidden;}
+        .parameters { width: 30%; float: left; height: 100%; overflow-y: scroll; border-right: 2px #ddd solid; }
+        .render { width: calc(70%-2px); float: left; height: 100%; overflow: hidden; }
+        .parameters { font-size: 9pt; }
+        canvas { position: absolute; }
+        table { width: 100%; border-collapse: collapse; }
+        
+        td { padding: 8px;  font-size: 9pt; border: 1px #ddd solid; }
+        tr { border-bottom: 1px #000 solid; }
+        tr:hover { background-color: #eee; }
+        input { width: 100%; font-size: 9pt; }
+        hr { border-top: 0; border-bottom: 1px #ddd dashed;}
+        img { border: 1px #ddd solid; }
+
+    </style>
+</head>
+<body>
+    
+
+    <div class="container">
+        <div class="parameters">
+            <div id="app">
+
+                <table>
+                    <tbody>
+
+                        <tr>
+                            <!-- DRAWING SETTINGS -->
+                            <td colspan="2"><b>Drawing settings</b></td>
+                        </tr>
+                        <tr>
+                            <td width="60%">Scale ({{ drawingSettings.scale }})<br/><small>Scaling of the canvas.</small></td>
+                            <td><input type="range" min="1" max="25" step=".5" v-model.number="drawingSettings.scale"/></td>
+                        </tr>
+                       
+                    </tbody>
+                </table>
+        
+            </div>
+        </div>
+        <div class="render">
+            <canvas id="canvas"></canvas>
+        </div>
+    </div>
+
+    <script src="lsystem.js"></script>
+
+    <script>
+
+        function Vec2(x,y) {
+            this.x=x;
+            this.y=y;
+            if(this.y == null) this.y=this.x;
+
+            this.toString = function() {
+                return this.x + ", " + this.y;
+            }
+          
+            this.add = function(v) {
+                return new Vec2(this.x+v.x, this.y+v.y);
+            }
+            this.subtract = function(v) {
+                return new Vec2(this.x-v.x, this.y-v.y);
+            }
+            this.scale = function(scalar) {
+                return new Vec2(scalar*this.x, scalar*this.y);
+            }
+            this.vmult = function(v) {
+                return new Vec2(this.x*v.x, this.y*v.y);
+            }
+            this.dot = function(v) {
+                return this.x*v.x + this.y*v.y;
+            }
+            this.length = function() {
+                return Math.sqrt(this.x*this.x + this.y*this.y);
+            }
+            this.rotate = function(angle) {
+                let c = Math.cos(angle);
+                let s = Math.sin(angle);
+                return new Vec2( c * this.x + -s * this.y, s * this.x + c * this.y );
+            }
+            this.distance = function(v) {
+                x = this.x-v.x; y = this.y-v.y;
+                return Math.sqrt(x*x + y*y);
+            }
+            this.apply = function(f) {
+                return new Vec2(f(this.x), f(this.y));
+            }
+            this.floor = function() {
+                return this.apply(Math.floor);
+            }
+            this.fract = function() {
+                return this.subtract(this.apply(Math.floor));
+            }
+            this.normal = function() {
+                return new Vec2(this.y, -this.x);
+            }
+            this.normalize = function() {
+                var l = this.length();
+                return new Vec2(this.x / l, this.y / l);
+            }
+            this.cross = function(v) {
+                return this.length() * v.length () * this.angle(v);
+            }
+        }
+
+        let canvas = document.getElementById('canvas');
+        canvas.width = window.innerWidth * canvasWidth;
+        canvas.height = window.innerHeight;
+        let ctx = canvas.getContext('2d');
+
+        let drawingSettings = {
+            scale: 2
+        }
+
+        let seed = 0;
+        let random = function() {
+            let x = Math.sin(seed++ * 4871452.47) * 87175.89;
+            return x - Math.floor(x);
+        };
+
+        // Map a value x which is between [a, b] to where it is between
+        // the range of [c, d]. This is used to map the probability distribution.
+        // The probability has a range of [0, 1] which we map to [-stdev, stdev].
+        function map(x, a, b, c, d) {
+
+            // let r1 = b-a;            // find the range of [a,b]
+            // let xNorm = (x-b)/r1;    // normalize onto the range of [a,b]
+            // let r2 = d-c;            // find the range of [c,d]
+            // return xNorm * r2 + d;   // map x to the range of [c,d]
+
+            /// ... is algebraically equivalent to:
+
+            return ( (x-b) * (d-c) + d ) / (b - a);
+
+        }
+
+        let drawModel = function () {
+
+            seed = 0;
+            ctx.save();
+            ctx.translate(canvas.width/2, canvas.height/2);
+            ctx.scale(drawingSettings.scale, drawingSettings.scale);
+
+            ctx.strokeStyle = "#000";
+            ctx.fillStyle = "#ddd";
+
+            // Do stuff ...
+
+            ctx.restore();
+        }
+
+        let vue = new Vue({
+            el: "#app",
+            data: {
+                drawingSettings: drawingSettings
+            }
+        });
+
+        // Flip the canvas (origin in the lower left corner)
+        ctx.translate(0, canvas.height);
+        ctx.scale(1,-1);
+
+        let animate = function() {
+            requestAnimationFrame(animate);
+            ctx.fillStyle = "#fff";
+            ctx.fillRect(-canvas.width, canvas.height, Math.max(drawingSettings.scale, 2) * canvas.width, -Math.max(drawingSettings.scale, 2) * canvas.height);
+            drawModel();   
+        }
+
+        animate(); 
+
+    </script>
+</body>
+</html>
