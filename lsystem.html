@@ -46,6 +46,77 @@
                             <td width="60%">Scale ({{ drawingSettings.scale }})<br/><small>Scaling of the canvas.</small></td>
                             <td><input type="range" min="1" max="25" step=".5" v-model.number="drawingSettings.scale"/></td>
                         </tr>
+
+                        <tr>
+                            <td colspan="2"><b>L-system</b></td>
+                        </tr>
+
+                        <tr>
+                            <td>Controls</td>
+                            <td>
+                                <button>Generate</button>
+                                <button>Reset</button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Iterations</td>
+                            <td>0</td>
+                        </tr>
+
+                        <tr>
+                            <td>Alphabet</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td>Axiom</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td>Rule 1</td>
+                            <td></td>
+                        </tr>
+                        
+                        <tr>
+                            <td>Rule 2</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td>Rule 3</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td>Rule 4</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td>Rule 5</td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2"><b>State</b></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="max-height: 150px; overflow-y: auto;">
+                                <code style="padding: 4px; border-radius: 6px; background-color: #ddd; display: block;">ABABABABABA</code>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2"><b>Examples</b></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">
+
+                            </td>
+                        </tr>
                        
                     </tbody>
                 </table>
@@ -160,6 +231,7 @@
             ctx.fillStyle = "#ddd";
 
             // Do stuff ...
+            ctx.fillRect(10,10,5,5);
 
             ctx.restore();
         }
@@ -167,7 +239,15 @@
         let vue = new Vue({
             el: "#app",
             data: {
-                drawingSettings: drawingSettings
+                drawingSettings: drawingSettings,
+                alphabet: "AB",
+                axiom: "A",
+                rule1: "A=ABA",
+                rule2: "B=BBB",
+                rule3: "",
+                rule4: "",
+                rule5: "",
+                state: ""
             }
         });
 
