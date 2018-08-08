@@ -49,9 +49,7 @@ var LSystem = /** @class */ (function () {
             for (var _b = 0, _c = this.rules; _b < _c.length; _b++) {
                 var rule = _c[_b];
                 if (rule.symbol == char) {
-                    stringBuffer += rule instanceof StochasticRuleset
-                        ? rule.stochasticRewrite()
-                        : rule.rewrite();
+                    stringBuffer += rule.rewrite();
                     rewritten = true;
                     break;
                 }
@@ -125,7 +123,7 @@ var StochasticRuleset = /** @class */ (function (_super) {
         _this.seed = 0;
         return _this;
     }
-    StochasticRuleset.prototype.stochasticRewrite = function () {
+    StochasticRuleset.prototype.rewrite = function () {
         return this.stochasticRules[Math.floor(this.random() * this.stochasticRules.length)];
     };
     StochasticRuleset.parse = function (rule) {

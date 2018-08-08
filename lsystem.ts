@@ -46,11 +46,7 @@ class LSystem {
             // Find the rule for this character and rewrite it.
             for(let rule of this.rules) {
                 if(rule.symbol == char) {
-
-                    stringBuffer += rule instanceof StochasticRuleset
-                                    ? (rule as StochasticRuleset).stochasticRewrite()
-                                    : rule.rewrite();
-
+                    stringBuffer += rule.rewrite()
                     rewritten = true;
                     break;
                 }
@@ -135,7 +131,7 @@ class StochasticRuleset extends Ruleset {
         super(symbol, undefined);
     }
 
-    public stochasticRewrite(): string {
+    public rewrite(): string {
         return this.stochasticRules[Math.floor(this.random() * this.stochasticRules.length)];
     }
 
