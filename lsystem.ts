@@ -1,5 +1,5 @@
 /* 
-    @author: Lars Rotgers, larsrotgers@gmail.com, 8-Aug-'18.
+    @author: Lars Rotgers, larsrotgers <at> gmail <dot> com, 8-Aug-'18.
 
     An L-system is created with an alphabet, an axiom (initial state), and a set of rules.
     Each generation, the set of rules is applied to the current state, which is 
