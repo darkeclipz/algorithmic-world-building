@@ -78,7 +78,7 @@ var LSystem = /** @class */ (function () {
         this.generation = 0;
     };
     // Create a new LSystem.
-    LSystem["new"] = function (alphabet, axiom, rules) {
+    LSystem.new = function (alphabet, axiom, rules) {
         var ruleSets = new Array();
         for (var _i = 0, rules_1 = rules; _i < rules_1.length; _i++) {
             var rule = rules_1[_i];
@@ -90,7 +90,7 @@ var LSystem = /** @class */ (function () {
     };
     return LSystem;
 }());
-// A ruleset specified how a character should be rewritten. 
+// A ruleset specifies how a character should be rewritten. 
 // Example:  let rule1 = Ruleset.parse("A=ABA"), which will
 // create a rulesets that rewrites A as ABA.
 var Ruleset = /** @class */ (function () {
@@ -107,7 +107,7 @@ var Ruleset = /** @class */ (function () {
     };
     return Ruleset;
 }());
-// A stochastig ruleset has multiple ways to rewrite the character. This is 
+// A stochastic ruleset has multiple ways to rewrite the character. This is 
 // based on a uniform probability.
 // Example: let sRule = StochasticRuleset.parse("A=ABA,BAB"), which will
 // create a stochastic ruleset where the character will be randomly rewritten as
@@ -143,3 +143,4 @@ var StochasticRuleset = /** @class */ (function (_super) {
     };
     return StochasticRuleset;
 }(Ruleset));
+//# sourceMappingURL=lsystem.js.map

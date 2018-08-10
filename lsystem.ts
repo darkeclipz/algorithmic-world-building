@@ -101,7 +101,7 @@ class LSystem {
 
 }
 
-// A ruleset specified how a character should be rewritten. 
+// A ruleset specifies how a character should be rewritten. 
 // Example:  let rule1 = Ruleset.parse("A=ABA"), which will
 // create a rulesets that rewrites A as ABA.
 class Ruleset {
@@ -120,7 +120,7 @@ class Ruleset {
 
 }
 
-// A stochastig ruleset has multiple ways to rewrite the character. This is 
+// A stochastic ruleset has multiple ways to rewrite the character. This is 
 // based on a uniform probability.
 // Example: let sRule = StochasticRuleset.parse("A=ABA,BAB"), which will
 // create a stochastic ruleset where the character will be randomly rewritten as
