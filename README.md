@@ -139,6 +139,8 @@ To add a more natural look, we can change the length of the branches by adding a
 
 ## Procedural landmass generation
 
+To create the procedural landmass, I followed [Sebastian Lague's tutorial on YouTube](https://www.youtube.com/watch?v=wbpMiKiSKm8&index=1&list=PLFt_AvWsXl0eBW2EiBtl_sxmDtSgZBxB3).
+
 ### Perlin noise
 
 ![Perlin noise](screenshots/perlin-noise.gif) 
