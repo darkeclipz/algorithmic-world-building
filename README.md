@@ -166,7 +166,7 @@ which (almost) results in the following image:
 
 ### Mesh
 
-Finally, we construct a mesh, and apply the correct height to the vertices' Y-axis of the mesh. To make sure that the water is flat, we will apply a curve to the range of [0, 1] where [0, 0.3] will always give a height of 0.
+Finally, we construct a mesh, and apply the correct height to the vertices' Y-axis of the mesh. To make sure that the water is flat, we will apply a curve to the range of [0, 1] where [0, 0.4] will always give a height of 0.
 
 ![Landmass generator](screenshots/procedural-mesh.gif) 
 
