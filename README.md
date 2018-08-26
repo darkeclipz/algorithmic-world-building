@@ -7,6 +7,7 @@ This repository contains various proof-of-concepts for different types of algori
  * [Skeleton](https://darkeclipz.github.io/algorithmic-world-building/skeleton.html)
  * [Joint interpolation](https://darkeclipz.github.io/algorithmic-world-building/joint-interpolation.html)
  * [Trees](https://darkeclipz.github.io/algorithmic-world-building/trees.html)
+ * Procedural landmass generation
 
 ## Math used
 
@@ -135,6 +136,20 @@ let branch = function(angle, depth, parent) {
 To add a more natural look, we can change the length of the branches by adding a certain standard deviation multiplied by a probability function. And if we apply just the right conditions, we get the points for a Hilbert curve.
 
 ![Hilbert](screenshots/hilbert.png) 
+
+## Procedural landmass generation
+
+### Perlin noise
+
+![Perlin noise](screenshots/perlin-noise.gif) 
+
+### Color map
+
+![Perlin noise](screenshots/perlin-noise-color.gif) 
+
+### Mesh
+
+![Landmass generator](screenshots/procedural-mesh.gif) 
 
 ## Todo
 
