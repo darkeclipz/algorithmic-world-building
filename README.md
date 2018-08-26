@@ -143,21 +143,38 @@ To create the procedural landmass, I followed [Sebastian Lague's tutorial on You
 
 ### Perlin noise
 
-![Perlin noise](screenshots/perlin-noise.gif) 
+First we create a height map with Perlin noise, which we extend to an fBm (fractal Brownian motion). This is done by repeating the Perlin noise generation multiple times, which are called _octaves_. For each octave, we increase the frequency of the function, also called the _lacunarity_, and we decrease the amplitude, also called the _persistance_.
+
+![Height map](screenshots/perlin-noise.gif) 
+
+A more detailed explanation of this function is found in [The Book of Shaders - Fractal Brownian Motion](https://thebookofshaders.com/13/).
 
 ### Color map
 
-![Perlin noise](screenshots/perlin-noise-color.gif) 
+After we have created the noise map, also called the _height map_, we can create a color map. The height map has values between [0, 1], so if we divide this interval in the following way:
+
+ 1. height < 0.40 : water
+ 2. height < 0.45 : sand
+ 3. height < 0.50 : grass
+ 4. height < 0.70 : rocks
+ 5. height < 0.80 : mountain
+ 6. height < 0.90 : snow
+
+which (almost) results in the following image:
+
+![Color map](screenshots/perlin-noise-color.gif) 
 
 ### Mesh
+
+Finally, we construct a mesh, and apply the correct height to the vertices' Y-axis of the mesh. To make sure that the water is flat, we will apply a curve to the range of [0, 1] where [0, 0.3] will always give a height of 0.
 
 ![Landmass generator](screenshots/procedural-mesh.gif) 
 
 ## Todo
 
- - Perlin noise
+ - L-systems
+ - Bezier curves
  - Simplex noise
  - Flood fill area (for tilemaps)
  - Distance map (for tilemaps)
- - Probability density functions
- - Biomes
+
