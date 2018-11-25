@@ -1,12 +1,12 @@
-﻿# Algorithmic world building
+﻿# Procedural generation
 
-This repository contains various proof-of-concepts for different types of algorithms that are useful for world building.
+This repository contains various proof-of-concepts for different types of algorithms that are useful for procedural generation.
 
- * [Game of life](https://darkeclipz.github.io/algorithmic-world-building/game-of-life.html)
+ * [Game of life](https://darkeclipz.github.io/procedural-generation/game-of-life.html)
  * [Voronoi](https://www.shadertoy.com/view/Xlccz2)
- * [Skeleton](https://darkeclipz.github.io/algorithmic-world-building/skeleton.html)
- * [Joint interpolation](https://darkeclipz.github.io/algorithmic-world-building/joint-interpolation.html)
- * [Trees](https://darkeclipz.github.io/algorithmic-world-building/trees.html)
+ * [Skeleton](https://darkeclipz.github.io/procedural-generation/skeleton.html)
+ * [Joint interpolation](https://darkeclipz.github.io/procedural-generation/joint-interpolation.html)
+ * [Trees](https://darkeclipz.github.io/procedural-generation/trees.html)
  * Procedural landmass generation
 
 ## Math used
