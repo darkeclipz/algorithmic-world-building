@@ -9,15 +9,6 @@ This repository contains various proof-of-concepts for different types of algori
  * [Trees](https://darkeclipz.github.io/procedural-generation/trees.html)
  * Procedural landmass generation
 
-## Math used
-
-Most of the math used to build this library is:
-
- * Vector Geometry
- * Probability Theory
- * Trigonometry
- * Basic algebra; know your functions
-
 ## Pseudo random number generator
 
 We want a seed based pseudo random number generator. The main reason for this is, we want predictive random numbers e.g.: if we start at a given seed, it should always generate the same sequence of random numbers. This property can be used to regenerate the same entity. 
